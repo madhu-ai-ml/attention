@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>All You Need Is Attention</title>
+<meta name="description" content="A home for AI, inspired by “Attention Is All You Need” (Vaswani et al., 2017), the paper that started the transformer era.">
+<meta property="og:title" content="All You Need Is Attention">
+<meta property="og:description" content="A home for AI, inspired by the paper that started the transformer era.">
+<meta name="theme-color" content="#0b0d12">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='7' fill='%230b0d12'/><circle cx='9' cy='20' r='3' fill='%238ab4ff'/><circle cx='23' cy='20' r='3' fill='%238ab4ff'/><path d='M9 20Q16 6 23 20' stroke='%238ab4ff' stroke-width='2' fill='none'/></svg>">
+<style>
+  :root {
+    --bg: #0b0d12;
+    --fg: #e8ebf2;
+    --muted: #8b93a7;
+    --accent: #8ab4ff;
+    --line: #1c2030;
+  }
+  * { box-sizing: border-box; }
+  html, body { height: 100%; }
+  body {
+    margin: 0;
+    background:
+      radial-gradient(900px 500px at 50% 35%, rgba(138,180,255,.09), transparent 70%),
+      var(--bg);
+    color: var(--fg);
+    font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    -webkit-font-smoothing: antialiased;
+  }
+  main {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 4rem 1.5rem 2rem;
+    text-align: center;
+  }
+  .eyebrow {
+    font-size: .8rem;
+    letter-spacing: .22em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin: 0 0 2.5rem;
+  }
+  .stage { position: relative; display: inline-block; padding-bottom: 5.5rem; }
+  h1 {
+    margin: 0;
+    font-weight: 600;
+    font-size: clamp(2.4rem, 8.5vw, 6rem);
+    letter-spacing: -.03em;
+    line-height: 1.05;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0 .28em;
+  }
+  .tok {
+    cursor: default;
+    transition: color .25s ease;
+    outline: none;
+    border-radius: .15em;
+  }
+  .tok.active { color: var(--accent); }
+  .tok:focus-visible { box-shadow: 0 0 0 2px var(--accent); }
+  svg.arcs {
+    position: absolute; left: 0; top: 0;
+    width: 100%; height: 100%;
+    pointer-events: none;
+    overflow: visible;
+  }
+  svg.arcs path {
+    fill: none;
+    stroke: var(--accent);
+    stroke-linecap: round;
+    transition: opacity .35s ease;
+  }
+  .sub {
+    max-width: 34rem;
+    margin: 1.5rem auto 0;
+    color: var(--muted);
+    font-size: 1.1rem;
+    line-height: 1.6;
+  }
+  .sub a, footer a {
+    color: var(--fg);
+    text-decoration: none;
+    border-bottom: 1px solid var(--line);
+    transition: border-color .2s, color .2s;
+  }
+  .sub a:hover, footer a:hover { color: var(--accent); border-color: var(--accent); }
+  .status {
+    margin-top: 2.5rem;
+    display: inline-flex; align-items: center; gap: .6rem;
+    font-size: .85rem; color: var(--muted);
+    border: 1px solid var(--line);
+    padding: .5rem 1rem; border-radius: 999px;
+  }
+  .dot {
+    width: .5rem; height: .5rem; border-radius: 50%;
+    background: var(--accent);
+    animation: pulse 2.4s ease-in-out infinite;
+  }
+  @keyframes pulse { 50% { opacity: .25; } }
+  footer {
+    padding: 1.5rem;
+    text-align: center;
+    font-size: .8rem;
+    color: var(--muted);
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .dot { animation: none; }
+    * { transition: none !important; }
+  }
+</style>
+</head>
+<body>
+<main>
+  <p class="eyebrow">allyouneedisattention.com</p>
+
+  <div class="stage" id="stage">
+    <svg class="arcs" id="arcs" aria-hidden="true"></svg>
+    <h1 id="title" aria-label="All you need is attention">
+      <span class="tok" tabindex="0">All</span>
+      <span class="tok" tabindex="0">you</span>
+      <span class="tok" tabindex="0">need</span>
+      <span class="tok" tabindex="0">is</span>
+      <span class="tok" tabindex="0">attention.</span>
+    </h1>
+  </div>
+
+  <p class="sub">
+    In 2017, a paper titled
+    <a href="https://arxiv.org/abs/1706.03762" target="_blank" rel="noopener">“Attention Is All You Need”</a>
+    introduced the Transformer and set off the AI revolution we’re living in.
+    This site is about what came next.
+  </p>
+
+  <div class="status"><span class="dot"></span> Something is being built here. Check back soon.</div>
+</main>
+
+<footer>
+  Inspired by Vaswani et al., 2017 &middot;
+  <a href="https://arxiv.org/abs/1706.03762" target="_blank" rel="noopener">Read the paper</a>
+</footer>
+
+<script>
+(() => {
+  const toks = [...document.querySelectorAll('.tok')];
+  const stage = document.getElementById('stage');
+  const svg = document.getElementById('arcs');
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  // Hand-tuned "attention" weights: row = query word, column = key word.
+  // Purely illustrative, not from a real model.
+  const W = [
+    //  All  you  need is   attention
+    [ .10, .10, .25, .05, .50 ], // All
+    [ .10, .10, .50, .05, .25 ], // you
+    [ .20, .35, .05, .10, .30 ], // need
+    [ .05, .10, .30, .05, .50 ], // is
+    [ .35, .10, .30, .15, .10 ], // attention
+  ];
+
+  const NS = 'http://www.w3.org/2000/svg';
+  let current = -1, timer = null, userHover = false;
+
+  function draw(i) {
+    current = i;
+    toks.forEach((t, k) => t.classList.toggle('active', k === i));
+    svg.replaceChildren();
+    if (i < 0) return;
+    const s = stage.getBoundingClientRect();
+    const centers = toks.map(t => {
+      const r = t.getBoundingClientRect();
+      return { x: r.left + r.width / 2 - s.left, y: r.bottom - s.top + 6 };
+    });
+    W[i].forEach((w, j) => {
+      const a = centers[i], b = centers[j];
+      const p = document.createElementNS(NS, 'path');
+      if (i === j) {
+        // self-attention: small loop under the word
+        const r = 18 + w * 60;
+        p.setAttribute('d', `M${a.x - 10},${a.y} C${a.x - 24},${a.y + r} ${a.x + 24},${a.y + r} ${a.x + 10},${a.y}`);
+      } else {
+        const depth = Math.min(24 + Math.abs(b.x - a.x) * 0.1, 64);
+        p.setAttribute('d', `M${a.x},${a.y} Q${(a.x + b.x) / 2},${a.y + depth * 2} ${b.x},${b.y}`);
+      }
+      p.style.strokeWidth = (1 + w * 9).toFixed(1);
+      p.style.opacity = (0.12 + w * 1.4).toFixed(2);
+      svg.appendChild(p);
+    });
+  }
+
+  function cycle() {
+    clearInterval(timer);
+    if (reduce) { draw(4); return; }
+    let n = 4;
+    draw(n);
+    timer = setInterval(() => { if (!userHover) draw(n = (n + 1) % toks.length); }, 2600);
+  }
+
+  toks.forEach((t, i) => {
+    t.addEventListener('mouseenter', () => { userHover = true; draw(i); });
+    t.addEventListener('focus',      () => { userHover = true; draw(i); });
+    t.addEventListener('mouseleave', () => { userHover = false; });
+    t.addEventListener('blur',       () => { userHover = false; });
+  });
+
+  addEventListener('resize', () => draw(current));
+  document.fonts && document.fonts.ready.then(() => draw(current));
+  cycle();
+})();
+</script>
+</body>
+</html>
