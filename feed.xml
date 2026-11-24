@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  RSS feed. When you publish an essay, add a new <item> at the top
+  (newest first) and update <lastBuildDate>. Dates use RFC 822 format.
+-->
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>All You Need Is Attention</title>
+    <link>https://allyouneedisattention.com/</link>
+    <atom:link href="https://allyouneedisattention.com/feed.xml" rel="self" type="application/rss+xml"/>
+    <description>Essays on AI and what came after “Attention Is All You Need.”</description>
+    <language>en</language>
+    <lastBuildDate>Mon, 23 Nov 2026 12:00:00 -0500</lastBuildDate>
+
+    <item>
+      <title>What came next</title>
+      <link>https://allyouneedisattention.com/essays/what-came-next/</link>
+      <guid isPermaLink="true">https://allyouneedisattention.com/essays/what-came-next/</guid>
+      <pubDate>Mon, 23 Nov 2026 12:00:00 -0500</pubDate>
+      <description>One paper about machine translation quietly became the blueprint for almost every AI system that followed. A short tour of how that happened.</description>
+    </item>
+  </channel>
+</rss>

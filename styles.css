@@ -93,11 +93,14 @@ main { flex: 1; width: 100%; }
 .hero h1 {
   margin: 0;
   font-weight: 600;
-  font-size: clamp(2.2rem, 7.5vw, 5rem);
+  /* Kept on one line so the arcs never cross a line break. The title is
+     ~10.6em wide, so size it to fit the viewport minus the hero padding. */
+  font-size: clamp(1.4rem, calc((100vw - 3rem) / 11), 5rem);
   letter-spacing: -.03em;
   line-height: 1.05;
   display: flex;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
+  white-space: nowrap;
   justify-content: center;
   gap: 0 .28em;
 }
@@ -387,3 +390,8 @@ svg.arcs path {
 @media (max-width: 480px) {
   .site-header .brand-name { display: none; }
 }
+
+/* ---------- 404 ---------- */
+.notfound { padding-top: 6rem; text-align: center; }
+.notfound .eyebrow { margin-bottom: 1rem; }
+.notfound .dek a { color: var(--fg); }
