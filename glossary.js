@@ -54,6 +54,22 @@
       term: 'Attention sink',
       def: 'A token, usually at the start of the text, that receives a lot of attention even though it carries little useful meaning.'
     },
+    'loss': {
+      term: 'Loss',
+      def: 'The number training tries to make smaller. For a language model it measures how surprised the model is by the token that actually comes next.'
+    },
+    'compute': {
+      term: 'Compute',
+      def: 'The total amount of calculation spent on a task, such as training a model.'
+    },
+    'power-law': {
+      term: 'Power law',
+      def: 'A relationship in which multiplying one quantity by a fixed amount always multiplies another by a fixed amount.'
+    },
+    'emergent-ability': {
+      term: 'Emergent ability',
+      def: 'A skill reported as absent in smaller models but present in larger ones. Researchers disagree about how many such jumps are real and how many come from the way a test is scored.'
+    },
     'embedding': {
       term: 'Embedding',
       def: 'A list of numbers (a vector) that represents a token. Tokens with related meanings end up with similar embeddings.'

@@ -7,7 +7,15 @@
     <atom:link href="https://allyouneedisattention.com/feed.xml" rel="self" type="application/rss+xml"/>
     <description>Essays on AI and what came after “Attention Is All You Need.”</description>
     <language>en</language>
-    <lastBuildDate>Tue, 24 Nov 2026 16:24:00 -0500</lastBuildDate>
+    <lastBuildDate>Tue, 24 Nov 2026 16:48:00 -0500</lastBuildDate>
+
+    <item>
+      <title>Why bigger worked</title>
+      <link>https://allyouneedisattention.com/essays/why-bigger-worked/</link>
+      <guid isPermaLink="true">https://allyouneedisattention.com/essays/why-bigger-worked/</guid>
+      <pubDate>Tue, 24 Nov 2026 16:48:00 -0500</pubDate>
+      <description>For a few years the surest way to build a better language model was to build a bigger one. What the scaling laws say, what they got wrong, and what they leave unexplained.</description>
+    </item>
 
     <item>
       <title>Attention, step by step</title>

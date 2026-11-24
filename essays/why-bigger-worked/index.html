@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Why bigger worked · All You Need Is Attention</title>
+<meta name="description" content="For a few years the surest way to build a better language model was to build a bigger one. What the scaling laws say, what they got wrong, and what they leave unexplained.">
+<meta property="og:title" content="Why bigger worked">
+<meta property="og:description" content="For a few years the surest way to build a better language model was to build a bigger one. What the scaling laws say, what they got wrong, and what they leave unexplained.">
+<meta property="og:type" content="article">
+<meta property="article:published_time" content="2026-11-24T16:48:00-05:00">
+<meta property="og:url" content="https://allyouneedisattention.com/essays/why-bigger-worked/">
+<meta property="og:site_name" content="All You Need Is Attention">
+<meta property="og:image" content="https://allyouneedisattention.com/essays/why-bigger-worked/og-image.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Why bigger worked, an essay from All You Need Is Attention.">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="canonical" href="https://allyouneedisattention.com/essays/why-bigger-worked/">
+<meta name="theme-color" content="#0b0d12">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='7' fill='%230b0d12'/><circle cx='9' cy='20' r='3' fill='%238ab4ff'/><circle cx='23' cy='20' r='3' fill='%238ab4ff'/><path d='M9 20Q16 6 23 20' stroke='%238ab4ff' stroke-width='2' fill='none'/></svg>">
+<link rel="stylesheet" href="/styles.css">
+<link rel="alternate" type="application/rss+xml" title="All You Need Is Attention" href="/feed.xml">
+</head>
+<body>
+<header class="site-header">
+  <a class="brand" href="/" aria-label="All You Need Is Attention, home"><svg viewBox="0 0 32 32" aria-hidden="true"><rect width="32" height="32" rx="7" fill="#151a26"/><circle cx="9" cy="20" r="3" fill="#8ab4ff"/><circle cx="23" cy="20" r="3" fill="#8ab4ff"/><path d="M9 20Q16 6 23 20" stroke="#8ab4ff" stroke-width="2" fill="none"/></svg><span class="brand-name">All You Need Is Attention</span></a>
+  <nav><a href="/#essays">Essays</a><a href="/glossary/">Glossary</a><a href="/about/">About</a></nav>
+</header>
+
+<main>
+  <article class="article">
+    <header>
+      <h1>Why bigger worked</h1>
+      <p class="dek">For a few years the surest way to build a better language model was to build a bigger one. What the scaling laws say, what they got wrong, and what they leave unexplained.</p>
+      <div class="meta"><time datetime="2026-11-24">November 24, 2026</time> · 5 min read</div>
+    </header>
+
+    <div class="prose">
+      <p>Most engineering gets harder to predict as it gets bigger. For a stretch around 2020, language models seemed to do the opposite. Take the same basic design, the <span class="term" data-term="transformer">Transformer</span>, make it larger, feed it more text, and it got better by an amount you could estimate before you started.</p>
+
+      <p>That regularity shaped the years that followed. It is also easy to misread, so this essay looks at what was measured, what was later corrected, and what nobody has fully explained.</p>
+
+      <h2>Eight sizes of one model</h2>
+
+      <p>When OpenAI published GPT-3 in 2020, it trained not one model but eight.<sup><a href="#fn1" id="ref1">1</a></sup> The smallest had 125 million <span class="term" data-term="parameters">parameters</span> and the largest 175 billion, 1,400 times as many. All eight were trained on the same amount of text, 300 billion <span class="term" data-term="token">tokens</span>, so the comparison is mostly about size.</p>
+
+      <p>The chart shows how they did on three tests. Each time, the model saw some worked examples in its <span class="term" data-term="prompt">prompt</span> and then had to answer on its own.</p>
+
+      <figure class="fig">
+        <div data-scale-chart>
+          <script type="application/json">{"x":[125,350,760,1300,2700,6700,13000,175000],"xNames":["125 million","350 million","760 million","1.3 billion","2.7 billion","6.7 billion","13 billion","175 billion"],"xTicks":[[125,"125M"],[1300,"1.3B"],[13000,"13B"],[175000,"175B"]],"linearTicks":[[0.001,"0"],[50000,"50B"],[100000,"100B"],[150000,"150B"]],"series":[{"name":"Finishing a passage","values":[33.5,43.1,51.3,54.9,62.9,67.3,71.3,79.3]},{"name":"Trivia","values":[6.96,16.3,26.5,32.1,42.3,51.6,57.5,71.2]},{"name":"Two-digit addition","values":[2.0,4.1,3.5,4.5,8.9,11.9,55.5,100.0]}]}</script>
+        </div>
+        <figcaption>Accuracy of the eight GPT-3 models with examples in the prompt. The tests are HellaSwag (finishing a passage), TriviaQA (trivia) and two-digit addition. Passages come with four endings, so guessing would score about 25 percent. Scores from Table H.1 of the GPT-3 paper.</figcaption>
+      </figure>
+
+      <p>On the plain axis, seven of the eight models are squeezed into the left edge, and the rest of the chart is one long line to a single point. Switch to the multiplying axis, where each step to the right multiplies the size, and two of the lines become fairly steady. Trivia rises at every size, from 7 percent to 71. So does finishing a passage, from 34 to 79.</p>
+
+      <p>That is the shape of the bargain. Each improvement costs a multiple of what the last one did. Progress is steady only if you are willing to keep multiplying.</p>
+
+      <h2>The law</h2>
+
+      <p>Test scores are a rough measure. Earlier the same year, a group at OpenAI had looked at something smoother: <span class="term" data-term="loss">loss</span>, which measures how surprised a model is by the next token of text it has not seen. They found that loss fell along a <span class="term" data-term="power-law">power law</span> as they increased any of three things: the size of the model, the amount of text, or the <span class="term" data-term="compute">compute</span> spent on training.<sup><a href="#fn2" id="ref2">2</a></sup></p>
+
+      <p>A power law means that multiplying the input by some amount always multiplies the output by the same amount. By their formulas, making a model ten times larger cut the loss by about 16 percent. Ten times the text cut it by about 20 percent. Ten times the compute, spent in the best way they could find, cut it by about 11. Each figure assumes the other ingredients are not holding things back.</p>
+
+      <p>Two things made this striking. The trends held over a huge range, about a millionfold in model size and more in compute. And most other choices hardly mattered: within reasonable limits, a model’s exact shape, such as how many layers or <span class="term" data-term="attention-head">attention heads</span> it had, made little difference next to its size.</p>
+
+      <details class="deeper">
+        <summary>Go deeper: the formulas</summary>
+        <p>Write <i>L</i> for the loss, <i>N</i> for the number of parameters (leaving out the <span class="term" data-term="embedding">embeddings</span>), <i>D</i> for training tokens and <i>C</i> for compute. Each law applies when that one ingredient is the bottleneck:</p>
+        <p class="math"><i>L</i> ∝ <i>N</i><sup> −0.076</sup></p>
+        <p class="math"><i>L</i> ∝ <i>D</i><sup> −0.095</sup></p>
+        <p class="math"><i>L</i> ∝ <i>C</i><sup> −0.050</sup></p>
+        <p>The percentages above follow directly: 10<sup>−0.076</sup> is about 0.84, so a tenfold increase in <i>N</i> leaves 84 percent of the loss. The exact numbers belong to one training set, WebText2, and one way of cutting text into tokens.</p>
+        <p>Loss is measured in nats. A loss of 2 means the model is, on average, about as uncertain as if it were choosing between <i>e</i><sup>2</sup>, or roughly 7.4, equally likely tokens.</p>
+      </details>
+
+      <h2>The correction</h2>
+
+      <p>The 2020 paper also gave advice. With ten times the compute, it suggested making the model about 5.5 times larger but using only about 1.8 times as much text. Many large models that followed were trained on about 300 billion tokens, however big they were.</p>
+
+      <p>In 2022 a team at DeepMind repeated the experiment, training more than 400 models, and reached a different answer: model size and training text should grow together, in roughly equal proportions.<sup><a href="#fn3" id="ref3">3</a></sup> To test it they built Chinchilla, with 70 billion parameters and 1.4 trillion tokens of text. Their earlier model Gopher, trained with about the same compute, had 280 billion parameters and 300 billion tokens.</p>
+
+      <p>Chinchilla was a quarter of the size, and it beat Gopher and the larger GPT-3 across a wide range of tests. So “bigger” was never quite the right word. What paid off was more compute, divided sensibly between a larger model and more reading.</p>
+
+      <h2>The jump</h2>
+
+      <p>Go back to the chart and look at the third line. The first six models never get past 12 percent at two-digit addition. Then the score goes to 56 and to 100 in two steps. Little in the earlier scores seems to warn you.</p>
+
+      <p>Researchers gave the name <span class="term" data-term="emergent-ability">emergent abilities</span> to skills like this, absent in smaller models, present in larger ones, and not predictable by extending the trend.<sup><a href="#fn4" id="ref4">4</a></sup> If scale can produce abilities without warning, that is exciting and worrying in equal measure.</p>
+
+      <p>A 2023 paper argued that many of these jumps come from how we keep score.<sup><a href="#fn5" id="ref5">5</a></sup> Suppose an answer is five tokens long, each token is right or wrong independently of the rest, and the answer only counts if every one is right. A model that gets each token right half the time succeeds about 3 percent of the time. At 80 percent per token it succeeds 33 percent of the time, and at 95 percent, 77. The skill improves smoothly, but the score leaps. The authors tested this on harder sums than the ones in the chart, four-digit addition and two-digit multiplication. When they gave partial credit, the sharp jumps smoothed out.</p>
+
+      <p>That does not make the jump unreal for anyone who needs the sum to be right. It does mean a sudden score is not proof of a sudden change inside the model.</p>
+
+      <h2>Why, though?</h2>
+
+      <p>The scaling laws describe a pattern. They do not say why it exists. There are theories, but no agreed explanation of why loss should follow such a clean curve, or why guessing the next token a little better should also improve trivia and arithmetic.</p>
+
+      <p>Nor can the curve go on forever. Language is partly unpredictable, so there is a floor that no model can get below, and the 2020 authors said plainly that their trends must eventually level off. And a lower loss is only a means to an end. The law predicts how surprised a model will be. It does not predict which skills will follow, or whether the result will be truthful or useful.</p>
+
+      <p>So the title of this essay promises a little too much. We know that bigger worked, and roughly how much it cost. Why it worked is still an open question.</p>
+
+      <section class="footnotes" aria-label="Footnotes">
+        <ol>
+          <li id="fn1">Brown et al., <a href="https://arxiv.org/abs/2005.14165" target="_blank" rel="noopener">“Language Models are Few-Shot Learners”</a> (2020). <a href="#ref1" aria-label="Back to text">↩</a></li>
+          <li id="fn2">Kaplan et al., <a href="https://arxiv.org/abs/2001.08361" target="_blank" rel="noopener">“Scaling Laws for Neural Language Models”</a> (2020). <a href="#ref2" aria-label="Back to text">↩</a></li>
+          <li id="fn3">Hoffmann et al., <a href="https://arxiv.org/abs/2203.15556" target="_blank" rel="noopener">“Training Compute-Optimal Large Language Models”</a> (2022). <a href="#ref3" aria-label="Back to text">↩</a></li>
+          <li id="fn4">Wei et al., <a href="https://arxiv.org/abs/2206.07682" target="_blank" rel="noopener">“Emergent Abilities of Large Language Models”</a> (2022). <a href="#ref4" aria-label="Back to text">↩</a></li>
+          <li id="fn5">Schaeffer, Miranda and Koyejo, <a href="https://arxiv.org/abs/2304.15004" target="_blank" rel="noopener">“Are Emergent Abilities of Large Language Models a Mirage?”</a> (2023). <a href="#ref5" aria-label="Back to text">↩</a></li>
+        </ol>
+      </section>
+    </div>
+
+<!-- build:nav -->
+    <nav class="essay-nav" aria-label="More essays">
+      <a class="prev" rel="prev" href="/essays/attention-step-by-step/"><span>← Previous</span>Attention, step by step</a>
+    </nav>
+<!-- /build:nav -->
+    <a class="back" href="/#essays">← All essays</a>
+  </article>
+</main>
+
+<footer class="site-footer">
+  Inspired by Vaswani et al., 2017 &middot;
+  <a href="https://arxiv.org/abs/1706.03762" target="_blank" rel="noopener">Read the paper</a> &middot;
+  <a href="/feed.xml">RSS</a>
+</footer>
+<script src="/glossary.js"></script>
+<script src="/figures/scale-chart.js"></script>
+</body>
+</html>
