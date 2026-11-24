@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>What a token is · All You Need Is Attention</title>
+<meta name="description" content="Language models never see letters or words. They see tokens. What those are, how they are chosen, and why they explain some of AI’s strangest mistakes.">
+<meta property="og:title" content="What a token is">
+<meta property="og:description" content="Language models never see letters or words. They see tokens, and that explains some of AI’s strangest mistakes.">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://allyouneedisattention.com/essays/what-a-token-is/">
+<meta property="og:site_name" content="All You Need Is Attention">
+<meta property="og:image" content="https://allyouneedisattention.com/og-image.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="All you need is attention, with curved attention lines linking the words.">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="canonical" href="https://allyouneedisattention.com/essays/what-a-token-is/">
+<meta name="theme-color" content="#0b0d12">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='7' fill='%230b0d12'/><circle cx='9' cy='20' r='3' fill='%238ab4ff'/><circle cx='23' cy='20' r='3' fill='%238ab4ff'/><path d='M9 20Q16 6 23 20' stroke='%238ab4ff' stroke-width='2' fill='none'/></svg>">
+<link rel="stylesheet" href="/styles.css">
+<link rel="alternate" type="application/rss+xml" title="All You Need Is Attention" href="/feed.xml">
+</head>
+<body>
+<header class="site-header">
+  <a class="brand" href="/" aria-label="All You Need Is Attention, home"><svg viewBox="0 0 32 32" aria-hidden="true"><rect width="32" height="32" rx="7" fill="#151a26"/><circle cx="9" cy="20" r="3" fill="#8ab4ff"/><circle cx="23" cy="20" r="3" fill="#8ab4ff"/><path d="M9 20Q16 6 23 20" stroke="#8ab4ff" stroke-width="2" fill="none"/></svg><span class="brand-name">All You Need Is Attention</span></a>
+  <nav><a href="/#essays">Essays</a><a href="/glossary/">Glossary</a><a href="/about/">About</a></nav>
+</header>
+
+<main>
+  <article class="article">
+    <header>
+      <h1>What a token is</h1>
+      <p class="dek">Language models never see letters or words. They see tokens. What those are, how they are chosen, and why they explain some of AI’s strangest mistakes.</p>
+      <div class="meta"><time datetime="2026-11-23">November 23, 2026</time> · 5 min read</div>
+    </header>
+
+    <div class="prose">
+      <p>For a while, one of the most reliable ways to trip up a chatbot was to ask how many r’s are in “strawberry.” Systems that could write passable sonnets and explain quantum tunneling would confidently answer two.</p>
+
+      <p>It looked like a lapse in basic intelligence. It was actually a window into how these systems read. A language model never sees the letters s-t-r-a-w-b-e-r-r-y. It sees a few chunks of text, each replaced by a number, and the letters inside those chunks are hidden from it. Those chunks are called <span class="term" data-term="token">tokens</span>, and once you understand them, a surprising amount of AI behavior starts to make sense.</p>
+
+      <h2>Text in, numbers out</h2>
+
+      <p>Neural networks only do arithmetic, so before a model can read anything, the text has to become numbers. That job belongs to a separate program called a <span class="term" data-term="tokenizer">tokenizer</span>. It has a fixed list of text fragments, its <span class="term" data-term="vocabulary">vocabulary</span>, and it chops your input into pieces from that list. Each piece has an ID number, and the model only ever receives the IDs.</p>
+
+      <p>Inside the model, each ID is swapped for an <span class="term" data-term="embedding">embedding</span>, a long list of numbers that the model learned during training. From there on, everything the previous essay described happens over tokens: attention connects tokens to other tokens, and the model’s output is a prediction of the next token’s ID, which the tokenizer turns back into text.</p>
+
+      <p>In English, a token averages roughly four characters, or about three-quarters of a word. Common words like “the” or “house” are usually a single token. Rarer words get split: “tokenization” might become “token” and “ization.”</p>
+
+      <h2>Why not letters? Why not words?</h2>
+
+      <p>Two obvious alternatives both fail. Reading letter by letter makes every sentence several times longer, and the cost of attention grows with the <em>square</em> of the length, since every position looks at every other position. Letters also carry little meaning on their own, so the model would spend much of its effort just reassembling words.</p>
+
+      <p>Reading whole words fails the other way. The list of possible words never ends: names, typos, slang, new coinages, “COVID,” every language on Earth. Any word missing from a fixed list would be unreadable.</p>
+
+      <p>Tokens are the compromise. Frequent words get a token of their own, and anything rarer is spelled out from smaller pieces, down to single characters if necessary. A vocabulary of tens of thousands of fragments can then express any text at all. GPT-2’s vocabulary had 50,257 tokens; more recent models typically use somewhere between about 100,000 and a few hundred thousand.</p>
+
+      <h2>How the pieces are chosen</h2>
+
+      <p>Nobody picks the fragments by hand. The most widely used method, <em><span class="term" data-term="bpe">byte-pair encoding</span></em>, began life in 1994 as a data-compression trick<sup><a href="#fn1" id="ref1">1</a></sup> and was adapted for language models in 2016.<sup><a href="#fn2" id="ref2">2</a></sup> It is almost embarrassingly simple:</p>
+
+      <ol>
+        <li>Start with every text split into single characters.</li>
+        <li>Count every pair of neighboring symbols across the training text.</li>
+        <li>Glue the most frequent pair into a new symbol, and add it to the vocabulary.</li>
+        <li>Repeat until the vocabulary is as big as you want.</li>
+      </ol>
+
+      <p>Early merges capture common letter pairs like “t” + “h.” Later ones build up syllables, then whole frequent words. The figure below runs that exact procedure, live in your browser, using the paragraphs of this essay as its training text.</p>
+
+      <figure class="fig">
+        <div data-bpe-explorer
+             data-corpus=".prose > p"
+             data-text="Tokens are the compromise between letters and words."
+             data-examples='["tokenization", "photosynthesis", "The the THE", "Grüße aus München"]'
+             data-max-merges="400"></div>
+        <figcaption>A toy tokenizer trained on this essay’s paragraphs. Drag the slider toward zero to undo its merges and watch the text fall apart into single characters. Dots mark spaces. Real tokenizers learn far more merges from far more text, so their pieces are longer, but the procedure is the same.</figcaption>
+      </figure>
+
+      <p>Try a word that appears often in this essay, like “tokenization,” and then one that never does, like “photosynthesis.” The familiar word comes out in one or two pieces; the unfamiliar one shatters into fragments. (Because this essay mentions “strawberry” several times, the toy tokenizer has learned it as a single token, which real tokenizers usually don’t.) That is exactly how a real model experiences a rare name or an unusual spelling.</p>
+
+      <details class="deeper">
+        <summary>Go deeper: byte-pair encoding in code</summary>
+        <p>Training learns an ordered list of merges. This is a minimal version of what the figure runs:</p>
+<pre><code>from collections import Counter
+
+def train_bpe(words, num_merges):
+    # words: Counter mapping each word to how often it appears
+    seqs = {w: list(w) for w in words}
+    merges = []
+    for _ in range(num_merges):
+        pairs = Counter()
+        for w, syms in seqs.items():
+            for a, b in zip(syms, syms[1:]):
+                pairs[a, b] += words[w]
+        if not pairs:
+            break
+        a, b = max(pairs, key=pairs.get)
+        merges.append((a, b))
+        for w, syms in seqs.items():
+            out, i = [], 0
+            while i &lt; len(syms):
+                if syms[i:i + 2] == [a, b]:
+                    out.append(a + b); i += 2
+                else:
+                    out.append(syms[i]); i += 1
+            seqs[w] = out
+    return merges</code></pre>
+        <p>To tokenize new text, start from characters again and keep applying whichever learned merge has the <em>earliest</em> rank among the pairs present, until none apply. Before any of this, text is first split on a simple pattern, roughly “runs of letters, runs of digits, runs of punctuation,” each keeping one leading space. That is why “ the” and “the” are different tokens.</p>
+        <p>Production tokenizers such as GPT-2’s work on raw bytes rather than characters.<sup><a href="#fn3" id="ref3">3</a></sup> The base vocabulary is then exactly 256 symbols, so any text in any language or encoding can be represented, and nothing is ever “unknown.”</p>
+      </details>
+
+      <h2>What tokens explain</h2>
+
+      <p><strong>Counting letters.</strong> If “strawberry” arrives as two or three multi-letter chunks, the model never directly sees how many r’s there are. It has to have learned the spelling of each chunk as a fact, the way you might know that “colonel” contains an l without hearing one. Models have since got much better at this, but the difficulty was never about intelligence.</p>
+
+      <p><strong>Arithmetic.</strong> Numbers get chopped into pieces too, and not always along digit boundaries that make sense for adding or multiplying. Doing column arithmetic when the columns are hidden inside arbitrary chunks is hard.</p>
+
+      <p><strong>Spaces and capitals.</strong> “The,” “ the” and “ THE” are typically three unrelated tokens. A model has to learn from data that they mean the same thing, which it does well for common words and less well for rare ones.</p>
+
+      <p><strong>Other languages.</strong> Tokenizers are trained mostly on English text, so English gets the most efficient chunks. The same sentence in many other languages can take several times as many tokens.<sup><a href="#fn4" id="ref4">4</a></sup> Since usage is billed per token and a model’s memory is measured in tokens, those languages are slower, more expensive and fit less into a single conversation.</p>
+
+      <p><strong>Glitch tokens.</strong> In 2023, researchers found tokens such as “SolidGoldMagikarp,” a Reddit username, that sat in GPT-3’s vocabulary but almost never appeared in its training data. The model had learned essentially nothing about them, and asking it to repeat one produced bizarre, evasive answers.<sup><a href="#fn5" id="ref5">5</a></sup> The tokenizer and the model had been trained on different text, and the gap showed.</p>
+
+      <h2>Why it matters to you</h2>
+
+      <p>If you use these systems, tokens are the unit everything is measured in. Prices are quoted per million tokens. A model’s <span class="term" data-term="context-window">context window</span>, how much it can consider at once, is a token count. When a model stumbles over spelling, digits or an unusual name, the tokenizer is a good first suspect.</p>
+
+      <p>There is also something quietly odd here. The tokenizer is about the only part of a modern language model that is not learned by the model itself. It is built beforehand by simple counting, then frozen. Everything the model knows, it knows in terms of pieces chosen by a 1990s compression trick. Attention may be all you need, but first, you need tokens.</p>
+
+      <section class="footnotes" aria-label="Footnotes">
+        <ol>
+          <li id="fn1">Gage, “A New Algorithm for Data Compression,” <i>C Users Journal</i> (1994). <a href="#ref1" aria-label="Back to text">↩</a></li>
+          <li id="fn2">Sennrich, Haddow and Birch, <a href="https://arxiv.org/abs/1508.07909" target="_blank" rel="noopener">“Neural Machine Translation of Rare Words with Subword Units”</a> (2016). <a href="#ref2" aria-label="Back to text">↩</a></li>
+          <li id="fn3">Radford et al., <a href="https://cdn.openai.com/better-language-models/language_models_are_unsupervised_multitask_learners.pdf" target="_blank" rel="noopener">“Language Models are Unsupervised Multitask Learners”</a> (2019). The GPT-2 paper, which introduced byte-level BPE. <a href="#ref3" aria-label="Back to text">↩</a></li>
+          <li id="fn4">Petrov et al., <a href="https://arxiv.org/abs/2305.15425" target="_blank" rel="noopener">“Language Model Tokenizers Introduce Unfairness Between Languages”</a> (2023). <a href="#ref4" aria-label="Back to text">↩</a></li>
+          <li id="fn5">Rumbelow and Watkins, <a href="https://www.lesswrong.com/posts/aPeJE8bSo6rAFoLqg/solidgoldmagikarp-plus-prompt-generation" target="_blank" rel="noopener">“SolidGoldMagikarp (plus, prompt generation)”</a> (2023). <a href="#ref5" aria-label="Back to text">↩</a></li>
+        </ol>
+      </section>
+    </div>
+
+    <a class="back" href="/#essays">← All essays</a>
+  </article>
+</main>
+
+<footer class="site-footer">
+  Inspired by Vaswani et al., 2017 &middot;
+  <a href="https://arxiv.org/abs/1706.03762" target="_blank" rel="noopener">Read the paper</a> &middot;
+  <a href="/feed.xml">RSS</a>
+</footer>
+<script src="/glossary.js"></script>
+<script src="/figures/bpe-explorer.js"></script>
+</body>
+</html>
