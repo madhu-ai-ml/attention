@@ -3,10 +3,10 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Glossary · All You Need Is Attention</title>
-<meta name="description" content="Plain-language definitions of the AI terms used in these essays.">
+<title>AI Glossary: Plain-Language Definitions of Key Terms</title>
+<meta name="description" content="Plain-language definitions of AI terms: token, attention, embedding, softmax, RLHF, scaling laws, context window and more.">
 <meta property="og:title" content="Glossary">
-<meta property="og:description" content="Plain-language definitions of the AI terms used in these essays.">
+<meta property="og:description" content="Plain-language definitions of AI terms: token, attention, embedding, softmax, RLHF, scaling laws, context window and more.">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://allyouneedisattention.com/glossary/">
 <meta property="og:site_name" content="All You Need Is Attention">
@@ -35,8 +35,64 @@
     </header>
 
     <div class="prose">
-      <dl class="glossary-list" id="glossary-list"></dl>
-      <noscript><p>The glossary needs JavaScript to display.</p></noscript>
+      <dl class="glossary-list" id="glossary-list">
+<!-- build:glossary -->
+        <dt id="attention">Attention</dt>
+        <dd>A mechanism that lets each token look at every other token and work out how much each one matters for understanding it. The weights are computed fresh for each input, using parameters learned in training.</dd>
+        <dt id="attention-head">Attention head</dt>
+        <dd>One of several attention calculations that run side by side in a layer, each with its own learned parameters.</dd>
+        <dt id="attention-sink">Attention sink</dt>
+        <dd>A token, usually at the start of the text, that receives a lot of attention even though it carries little useful meaning.</dd>
+        <dt id="base-model">Base model</dt>
+        <dd>A language model that has been pretrained to continue text but not yet trained to follow instructions or hold a conversation.</dd>
+        <dt id="bpe">Byte-pair encoding (BPE)</dt>
+        <dd>The most common way to build a tokenizer’s vocabulary: start from single characters (or bytes) and repeatedly merge the most frequent neighboring pair into a new token.</dd>
+        <dt id="compute">Compute</dt>
+        <dd>The total amount of calculation spent on a task, such as training a model.</dd>
+        <dt id="context-window">Context window</dt>
+        <dd>The maximum number of tokens a model can take into account at once, covering both your input and its reply.</dd>
+        <dt id="embedding">Embedding</dt>
+        <dd>A list of numbers (a vector) that represents a token. Tokens with related meanings end up with similar embeddings.</dd>
+        <dt id="emergent-ability">Emergent ability</dt>
+        <dd>A skill reported as absent in smaller models but present in larger ones. Researchers disagree about how many such jumps are real and how many come from the way a test is scored.</dd>
+        <dt id="fine-tuning">Fine-tuning</dt>
+        <dd>Further training of a pretrained model on a smaller, focused dataset to adapt it to a particular task or style.</dd>
+        <dt id="gpu">GPU</dt>
+        <dd>Graphics processing unit. A chip built to do many simple calculations at once, originally for graphics, now the workhorse of AI training.</dd>
+        <dt id="loss">Loss</dt>
+        <dd>The number training tries to make smaller. For a language model it measures how surprised the model is by the token that actually comes next.</dd>
+        <dt id="causal-mask">Mask (causal)</dt>
+        <dd>The step that hides later tokens, so a model trained to predict the next token cannot look ahead.</dd>
+        <dt id="parameters">Parameters</dt>
+        <dd>The numbers inside a model that are adjusted during training. “175 billion parameters” means 175 billion of these adjustable weights.</dd>
+        <dt id="power-law">Power law</dt>
+        <dd>A relationship in which multiplying one quantity by a fixed amount always multiplies another by a fixed amount.</dd>
+        <dt id="pretraining">Pretraining</dt>
+        <dd>The first, most expensive stage of training, where a model learns general patterns from a huge amount of text, usually by predicting missing or next words.</dd>
+        <dt id="prompt">Prompt</dt>
+        <dd>The text you give a model as input. A model’s output is its continuation of, or response to, the prompt.</dd>
+        <dt id="query-key-value">Query, key and value</dt>
+        <dd>Three lists of numbers an attention head makes from each token. Queries are compared with keys to set the weights, and the weights decide how much of each value is passed along.</dd>
+        <dt id="reward-model">Reward model</dt>
+        <dd>A model trained on people’s comparisons to score replies by how likely people are to prefer them.</dd>
+        <dt id="rlhf">RLHF</dt>
+        <dd>Reinforcement learning from human feedback. People compare or rank model responses, and the model is tuned toward the responses they prefer.</dd>
+        <dt id="scaling-laws">Scaling laws</dt>
+        <dd>Empirical rules showing that a model’s error falls smoothly and predictably as you increase its size, training data and compute.</dd>
+        <dt id="softmax">Softmax</dt>
+        <dd>A function that turns a list of scores into positive weights that add up to 1, exaggerating the gap between large and small scores.</dd>
+        <dt id="sycophancy">Sycophancy</dt>
+        <dd>A tendency to tell people what they want to hear, such as agreeing with a mistaken view, instead of what is accurate.</dd>
+        <dt id="token">Token</dt>
+        <dd>The unit of text a model reads and writes: usually a word or a piece of a word. GPT-2’s tokenizer splits “unbelievable” into “un”, “bel”, “iev” and “able”.</dd>
+        <dt id="tokenizer">Tokenizer</dt>
+        <dd>The program that splits text into tokens and turns each one into an ID number before a model sees it, and turns IDs back into text afterward.</dd>
+        <dt id="transformer">Transformer</dt>
+        <dd>The neural-network architecture introduced in “Attention Is All You Need” (2017). It is built from stacked layers of attention and small feed-forward networks, with no recurrence.</dd>
+        <dt id="vocabulary">Vocabulary</dt>
+        <dd>The fixed list of tokens a tokenizer can produce. Each entry has an ID number. Typical sizes range from about 50,000 to a few hundred thousand.</dd>
+<!-- /build:glossary -->
+      </dl>
     </div>
   </article>
 </main>

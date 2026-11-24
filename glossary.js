@@ -4,9 +4,10 @@
   1. In essays, mark a term with:
        <span class="term" data-term="token">tokens</span>
      Hovering, focusing or tapping it shows the definition.
-  2. On /glossary/, an element with id="glossary-list" is filled with every entry.
+  2. python3 _tools/build.py writes every entry into /glossary/.
 
-  To add a term, add an entry below (keys are lowercase, kebab-case).
+  To add a term, add an entry below (keys are lowercase, kebab-case), in the same
+  form as the others, then run the build.
 */
 (() => {
   const GLOSSARY = {
@@ -119,22 +120,6 @@
       def: 'Empirical rules showing that a model’s error falls smoothly and predictably as you increase its size, training data and compute.'
     },
   };
-
-  /* ---------- Glossary page ---------- */
-  const list = document.getElementById('glossary-list');
-  if (list) {
-    Object.entries(GLOSSARY)
-      .sort((a, b) => a[1].term.localeCompare(b[1].term))
-      .forEach(([key, { term, def }]) => {
-        const dt = document.createElement('dt');
-        dt.id = key;
-        dt.textContent = term;
-        const dd = document.createElement('dd');
-        dd.textContent = def;
-        list.append(dt, dd);
-      });
-    if (location.hash) document.getElementById(location.hash.slice(1))?.scrollIntoView();
-  }
 
   /* ---------- Inline term tooltips ---------- */
   const terms = [...document.querySelectorAll('.term[data-term]')];

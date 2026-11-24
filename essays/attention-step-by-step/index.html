@@ -3,7 +3,8 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Attention, step by step · All You Need Is Attention</title>
+<title>How Attention Works in GPT-2, Step by Step</title>
+<meta name="search-title" content="How Attention Works in GPT-2, Step by Step">
 <meta name="description" content="One sentence, one word, one real attention head. A walk through the arithmetic at the heart of a language model, using actual numbers from GPT-2.">
 <meta property="og:title" content="Attention, step by step">
 <meta property="og:description" content="One sentence, one word, one real attention head. A walk through the arithmetic at the heart of a language model, using actual numbers from GPT-2.">
@@ -21,6 +22,30 @@
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='7' fill='%230b0d12'/><circle cx='9' cy='20' r='3' fill='%238ab4ff'/><circle cx='23' cy='20' r='3' fill='%238ab4ff'/><path d='M9 20Q16 6 23 20' stroke='%238ab4ff' stroke-width='2' fill='none'/></svg>">
 <link rel="stylesheet" href="/styles.css">
 <link rel="alternate" type="application/rss+xml" title="All You Need Is Attention" href="/feed.xml">
+<!-- build:data -->
+<script type="application/ld+json">
+{
+ "@context": "https://schema.org",
+ "@type": "BlogPosting",
+ "headline": "Attention, step by step",
+ "description": "One sentence, one word, one real attention head. A walk through the arithmetic at the heart of a language model, using actual numbers from GPT-2.",
+ "image": "https://allyouneedisattention.com/essays/attention-step-by-step/og-image.png",
+ "datePublished": "2026-11-24T16:24:00-05:00",
+ "dateModified": "2026-11-24T16:24:00-05:00",
+ "author": {
+  "@type": "Person",
+  "name": "Madhu",
+  "url": "https://allyouneedisattention.com/about/",
+  "sameAs": [
+   "https://x.com/madhu_jayakumar",
+   "https://www.linkedin.com/in/madhu-jayakumar/",
+   "https://madhujayakumar.com/"
+  ]
+ },
+ "mainEntityOfPage": "https://allyouneedisattention.com/essays/attention-step-by-step/"
+}
+</script>
+<!-- /build:data -->
 </head>
 <body>
 <header class="site-header">
@@ -33,7 +58,7 @@
     <header>
       <h1>Attention, step by step</h1>
       <p class="dek">One sentence, one word, one real attention head. A walk through the arithmetic at the heart of a language model, using actual numbers from GPT-2.</p>
-      <div class="meta"><time datetime="2026-11-24">November 24, 2026</time> · 5 min read</div>
+      <div class="meta">By <a rel="author" href="/about/">Madhu</a> · <time datetime="2026-11-24">November 24, 2026</time> · 5 min read</div>
     </header>
 
     <div class="prose">

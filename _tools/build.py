@@ -7,7 +7,8 @@
 Reads each essays/<slug>/index.html and generates:
   - the essay list in index.html          (between build:essays markers)
   - previous/next links in each essay     (between build:nav markers)
-  - each essay's date and reading time
+  - each essay's byline, date, reading time, search title and article data
+  - the definitions in glossary/index.html, from glossary.js
   - feed.xml and sitemap.xml
   - a share card per essay, essays/<slug>/og-image.png (needs Google Chrome)
 
@@ -36,6 +37,9 @@ ROOT = Path(__file__).resolve().parent.parent
 SITE = 'https://allyouneedisattention.com'
 SITE_TITLE = 'All You Need Is Attention'
 FEED_DESCRIPTION = 'Essays on AI and what came after “Attention Is All You Need.”'
+AUTHOR = 'Madhu'
+AUTHOR_LINKS = ['https://x.com/madhu_jayakumar', 'https://www.linkedin.com/in/madhu-jayakumar/',
+                'https://madhujayakumar.com/']
 WORDS_PER_MINUTE = 230
 PAGES = ['index.html', 'glossary/index.html', 'about/index.html']  # besides the essays
 CHROME = [
@@ -75,7 +79,37 @@ def fill_marker(text, name, content, where):
                         text, f'build:{name} block', where)
 
 
+def json_ld(data):
+    # "<" is escaped so no text can close the script tag early.
+    text = json.dumps(data, ensure_ascii=False, indent=1).replace('<', '\\u003c')
+    return f'<script type="application/ld+json">\n{text}\n</script>'
+
+
 # ---------- Reading essays ----------
+
+def parse_time(stamp, what, rel):
+    try:
+        moment = datetime.fromisoformat(stamp)
+    except ValueError:
+        raise BuildError(f'{rel}: bad {what} {stamp!r} (want 2026-11-24T16:24:00-05:00)')
+    if moment.tzinfo is None:
+        raise BuildError(f'{rel}: {what} {stamp!r} needs a timezone')
+    return moment
+
+
+def load_glossary():
+    source = (ROOT / 'glossary.js').read_text(encoding='utf-8')
+    block = find(r'const GLOSSARY = \{\n(.*?)\n  \};', source, 'GLOSSARY list', 'glossary.js')
+    entries = re.findall(r"^    '([a-z0-9-]+)': \{\n      term: '((?:[^'\\\n]|\\.)*)',\n"
+                         r"      def: '((?:[^'\\\n]|\\.)*)'\n    \},?$", block, re.M)
+    keys = [e[0] for e in entries]
+    if not entries or len(entries) != len(re.findall(r'\bterm:', block)) or len(entries) != block.count('    },'):
+        raise BuildError("glossary.js: an entry isn't in the usual form (key, then term and def in single quotes)")
+    if len(set(keys)) != len(keys):
+        raise BuildError('glossary.js: the same key appears twice')
+    clean = lambda t: re.sub(r'\\(.)', r'\1', t)
+    return sorted(((k, clean(t), clean(d)) for k, t, d in entries), key=lambda e: e[1].lower())
+
 
 def reading_minutes(text, where):
     start = text.find('<div class="prose">')
@@ -94,17 +128,20 @@ def load_essays():
         text = path.read_text(encoding='utf-8')
         stamp = find(r'<meta property="article:published_time" content="([^"]*)">', text,
                      'article:published_time tag', rel)
-        try:
-            published = datetime.fromisoformat(stamp)
-        except ValueError:
-            raise BuildError(f'{rel}: bad published time {stamp!r} (want 2026-11-24T16:24:00-05:00)')
-        if published.tzinfo is None:
-            raise BuildError(f'{rel}: published time {stamp!r} needs a timezone')
+        published = parse_time(stamp, 'published time', rel)
+        modified = re.findall(r'<meta property="article:modified_time" content="([^"]*)">', text)
+        if len(modified) > 1:
+            raise BuildError(f'{rel}: more than one article:modified_time tag')
+        modified = parse_time(modified[0], 'modified time', rel) if modified else published
+        if modified < published:
+            raise BuildError(f'{rel}: modified before it was published')
         essays.append({
             'slug': path.parent.name, 'rel': rel, 'text': text, 'published': published,
             'title': plain(find(r'<h1>(.*?)</h1>', text, '<h1>', rel)),
             'summary': plain(find(r'<p class="dek">(.*?)</p>', text, 'summary (class="dek")', rel)),
-            'minutes': reading_minutes(text, rel),
+            'minutes': reading_minutes(text, rel), 'modified': modified,
+            'search_title': html.unescape(find(r'<meta name="search-title" content="([^"]+)">', text,
+                                               'search-title tag', rel)),
         })
     if not essays:
         raise BuildError('no essays found')
@@ -131,8 +168,9 @@ def render_essay(essay, older, newer):
     rel, text = essay['rel'], essay['text']
     url = SITE + url_path(essay)
     title, summary = esc(essay['title']), esc(essay['summary'])
+    byline = f'By <a rel="author" href="/about/">{esc(AUTHOR)}</a> · '
     for pattern, new, what in [
-        (r'<title>.*?</title>', f'<title>{title} · {SITE_TITLE}</title>', '<title>'),
+        (r'<title>.*?</title>', f'<title>{esc(essay["search_title"])}</title>', '<title>'),
         (r'<meta name="description" content="[^"]*">', f'<meta name="description" content="{summary}">', 'description'),
         (r'<meta property="og:title" content="[^"]*">', f'<meta property="og:title" content="{title}">', 'og:title'),
         (r'<meta property="og:description" content="[^"]*">', f'<meta property="og:description" content="{summary}">', 'og:description'),
@@ -140,7 +178,7 @@ def render_essay(essay, older, newer):
         (r'<link rel="canonical" href="[^"]*">', f'<link rel="canonical" href="{url}">', 'canonical link'),
         (r'<meta property="og:image" content="[^"]*">', f'<meta property="og:image" content="{url}og-image.png">', 'og:image'),
         (r'<meta property="og:image:alt" content="[^"]*">', f'<meta property="og:image:alt" content="{title}, an essay from {SITE_TITLE}.">', 'og:image:alt'),
-        (r'<div class="meta"><time.*?</div>', f'<div class="meta">{time_tag(essay)}</div>', 'date line'),
+        (r'<div class="meta">.*?</div>', f'<div class="meta">{byline}{time_tag(essay)}</div>', 'date line'),
     ]:
         text = replace_once(pattern, new, text, what, rel)
 
@@ -151,7 +189,24 @@ def render_essay(essay, older, newer):
                          f'<span>{label}</span>{esc(other["title"])}</a>')
     nav = '\n'.join(['    <nav class="essay-nav" aria-label="More essays">', *('  ' + l for l in links),
                      '    </nav>']) if links else ''
-    return fill_marker(text, 'nav', nav, rel)
+    text = fill_marker(text, 'nav', nav, rel)
+    return fill_marker(text, 'data', json_ld({
+        '@context': 'https://schema.org',
+        '@type': 'BlogPosting',
+        'headline': essay['title'],
+        'description': essay['summary'],
+        'image': f'{url}og-image.png',
+        'datePublished': essay['published'].isoformat(),
+        'dateModified': essay['modified'].isoformat(),
+        'author': {'@type': 'Person', 'name': AUTHOR, 'url': f'{SITE}/about/', 'sameAs': AUTHOR_LINKS},
+        'mainEntityOfPage': url,
+    }), rel)
+
+
+def render_glossary(text):
+    items = '\n'.join(f'        <dt id="{key}">{esc(term)}</dt>\n        <dd>{esc(definition)}</dd>'
+                      for key, term, definition in load_glossary())
+    return fill_marker(text, 'glossary', items, 'glossary/index.html')
 
 
 def render_home(essays):
@@ -241,9 +296,7 @@ def check_pages(pages, cards):
     """pages: {rel: text}. Returns a list of problems."""
     problems = []
     parsed = {rel: Page(text) for rel, text in pages.items()}
-    glossary = (ROOT / 'glossary.js').read_text(encoding='utf-8')
-    keys = set(re.findall(r"^    '([a-z0-9-]+)': \{", glossary, re.M))
-    parsed['glossary/index.html'].ids += sorted(keys)  # added by glossary.js in the browser
+    keys = {key for key, _, _ in load_glossary()}
 
     def target(rel, link):
         parts = urlsplit(link)
@@ -281,7 +334,7 @@ def check_pages(pages, cards):
                 json.loads(re.sub(r'(^|[^\d])\.(\d)', r'\g<1>0.\2', value))
             except ValueError as err:
                 problems.append(f'{rel}: {key} is not valid ({err})')
-        for block in re.findall(r'<script type="application/json">(.*?)</script>', text, re.S):
+        for block in re.findall(r'<script type="application/(?:ld\+)?json">(.*?)</script>', text, re.S):
             try:
                 json.loads(block)
             except ValueError as err:
@@ -291,9 +344,11 @@ def check_pages(pages, cards):
             refs = [int(n) for n in re.findall(r'id="ref(\d+)"', text)]
             if notes != list(range(1, len(notes) + 1)) or refs != notes:
                 problems.append(f'{rel}: footnotes out of order (notes {notes}, references {refs})')
-            for left in re.findall(r'ESSAY TITLE|ONE-SENTENCE SUMMARY|ONE- OR TWO-SENTENCE|YYYY-MM-DD|MONTH D, YYYY'
+            for left in re.findall(r'ESSAY TITLE|SEARCH TITLE|ONE-SENTENCE SUMMARY|ONE- OR TWO-SENTENCE|YYYY-MM-DD|MONTH D, YYYY'
                                    r'|N min read|Go deeper: TOPIC|CAPTION\.|XXXX\.XXXXX|\(YEAR\)|/SLUG/', text):
                 problems.append(f'{rel}: template placeholder left in: {left}')
+        if rel != '404.html' and not re.search(r'<meta name="description" content="[^"]{50,}">', text):
+            problems.append(f'{rel}: description is missing or under 50 characters')
         if re.search(r'^(<{7}|>{7}) ', text, re.M):
             problems.append(f'{rel}: unresolved merge conflict')
     return problems
@@ -346,6 +401,7 @@ def build(check):
     pages['index.html'] = render_home(essays)
     for rel in [*PAGES[1:], '404.html']:
         pages[rel] = (ROOT / rel).read_text(encoding='utf-8')
+    pages['glossary/index.html'] = render_glossary(pages['glossary/index.html'])
 
     cards = {f"essays/{e['slug']}/og-image.png": card_html(e) for e in essays}
     problems = check_pages(pages, cards)
