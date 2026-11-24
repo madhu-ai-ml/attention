@@ -10,7 +10,15 @@
     <atom:link href="https://allyouneedisattention.com/feed.xml" rel="self" type="application/rss+xml"/>
     <description>Essays on AI and what came after “Attention Is All You Need.”</description>
     <language>en</language>
-    <lastBuildDate>Mon, 23 Nov 2026 12:00:00 -0500</lastBuildDate>
+    <lastBuildDate>Tue, 24 Nov 2026 13:00:00 -0500</lastBuildDate>
+
+    <item>
+      <title>What a token is</title>
+      <link>https://allyouneedisattention.com/essays/what-a-token-is/</link>
+      <guid isPermaLink="true">https://allyouneedisattention.com/essays/what-a-token-is/</guid>
+      <pubDate>Tue, 24 Nov 2026 13:00:00 -0500</pubDate>
+      <description>Language models never see letters or words. They see tokens. What those are, how they are chosen, and why they explain some of AI’s strangest mistakes.</description>
+    </item>
 
     <item>
       <title>What came next</title>

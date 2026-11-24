@@ -20,7 +20,23 @@
     },
     'token': {
       term: 'Token',
-      def: 'The unit of text a model reads and writes: usually a word or a piece of a word. “Unbelievable” might be split into “un”, “believ” and “able”.'
+      def: 'The unit of text a model reads and writes: usually a word or a piece of a word. GPT-2’s tokenizer splits “unbelievable” into “un”, “bel”, “iev” and “able”.'
+    },
+    'tokenizer': {
+      term: 'Tokenizer',
+      def: 'The program that splits text into tokens and turns each one into an ID number before a model sees it, and turns IDs back into text afterward.'
+    },
+    'vocabulary': {
+      term: 'Vocabulary',
+      def: 'The fixed list of tokens a tokenizer can produce. Each entry has an ID number. Typical sizes range from about 50,000 to a few hundred thousand.'
+    },
+    'bpe': {
+      term: 'Byte-pair encoding (BPE)',
+      def: 'The most common way to build a tokenizer’s vocabulary: start from single characters (or bytes) and repeatedly merge the most frequent neighboring pair into a new token.'
+    },
+    'context-window': {
+      term: 'Context window',
+      def: 'The maximum number of tokens a model can take into account at once, covering both your input and its reply.'
     },
     'embedding': {
       term: 'Embedding',
