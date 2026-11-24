@@ -7,7 +7,15 @@
     <atom:link href="https://allyouneedisattention.com/feed.xml" rel="self" type="application/rss+xml"/>
     <description>Essays on AI and what came after “Attention Is All You Need.”</description>
     <language>en</language>
-    <lastBuildDate>Tue, 24 Nov 2026 16:48:00 -0500</lastBuildDate>
+    <lastBuildDate>Tue, 24 Nov 2026 17:01:00 -0500</lastBuildDate>
+
+    <item>
+      <title>How a chatbot is made</title>
+      <link>https://allyouneedisattention.com/essays/how-a-chatbot-is-made/</link>
+      <guid isPermaLink="true">https://allyouneedisattention.com/essays/how-a-chatbot-is-made/</guid>
+      <pubDate>Tue, 24 Nov 2026 17:01:00 -0500</pubDate>
+      <description>A language model trained on the internet will finish your sentence, not answer your question. What people do to turn one into the other, and what that teaches it by accident.</description>
+    </item>
 
     <item>
       <title>Why bigger worked</title>

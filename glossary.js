@@ -70,6 +70,18 @@
       term: 'Emergent ability',
       def: 'A skill reported as absent in smaller models but present in larger ones. Researchers disagree about how many such jumps are real and how many come from the way a test is scored.'
     },
+    'base-model': {
+      term: 'Base model',
+      def: 'A language model that has been pretrained to continue text but not yet trained to follow instructions or hold a conversation.'
+    },
+    'reward-model': {
+      term: 'Reward model',
+      def: 'A model trained on people’s comparisons to score replies by how likely people are to prefer them.'
+    },
+    'sycophancy': {
+      term: 'Sycophancy',
+      def: 'A tendency to tell people what they want to hear, such as agreeing with a mistaken view, instead of what is accurate.'
+    },
     'embedding': {
       term: 'Embedding',
       def: 'A list of numbers (a vector) that represents a token. Tokens with related meanings end up with similar embeddings.'

@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>How a chatbot is made · All You Need Is Attention</title>
+<meta name="description" content="A language model trained on the internet will finish your sentence, not answer your question. What people do to turn one into the other, and what that teaches it by accident.">
+<meta property="og:title" content="How a chatbot is made">
+<meta property="og:description" content="A language model trained on the internet will finish your sentence, not answer your question. What people do to turn one into the other, and what that teaches it by accident.">
+<meta property="og:type" content="article">
+<meta property="article:published_time" content="2026-11-24T17:01:00-05:00">
+<meta property="og:url" content="https://allyouneedisattention.com/essays/how-a-chatbot-is-made/">
+<meta property="og:site_name" content="All You Need Is Attention">
+<meta property="og:image" content="https://allyouneedisattention.com/essays/how-a-chatbot-is-made/og-image.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="How a chatbot is made, an essay from All You Need Is Attention.">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="canonical" href="https://allyouneedisattention.com/essays/how-a-chatbot-is-made/">
+<meta name="theme-color" content="#0b0d12">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='7' fill='%230b0d12'/><circle cx='9' cy='20' r='3' fill='%238ab4ff'/><circle cx='23' cy='20' r='3' fill='%238ab4ff'/><path d='M9 20Q16 6 23 20' stroke='%238ab4ff' stroke-width='2' fill='none'/></svg>">
+<link rel="stylesheet" href="/styles.css">
+<link rel="alternate" type="application/rss+xml" title="All You Need Is Attention" href="/feed.xml">
+</head>
+<body>
+<header class="site-header">
+  <a class="brand" href="/" aria-label="All You Need Is Attention, home"><svg viewBox="0 0 32 32" aria-hidden="true"><rect width="32" height="32" rx="7" fill="#151a26"/><circle cx="9" cy="20" r="3" fill="#8ab4ff"/><circle cx="23" cy="20" r="3" fill="#8ab4ff"/><path d="M9 20Q16 6 23 20" stroke="#8ab4ff" stroke-width="2" fill="none"/></svg><span class="brand-name">All You Need Is Attention</span></a>
+  <nav><a href="/#essays">Essays</a><a href="/glossary/">Glossary</a><a href="/about/">About</a></nav>
+</header>
+
+<main>
+  <article class="article">
+    <header>
+      <h1>How a chatbot is made</h1>
+      <p class="dek">A language model trained on the internet will finish your sentence, not answer your question. What people do to turn one into the other, and what that teaches it by accident.</p>
+      <div class="meta"><time datetime="2026-11-24">November 24, 2026</time> · 5 min read</div>
+    </header>
+
+    <div class="prose">
+      <p>Ask the smallest GPT-2 model “Can you explain why the sky is blue?” and let it pick its likeliest next word each time. Its answer begins:</p>
+
+      <blockquote>I’m not sure. I’m not sure if it’s because I’m a little bit of a blue-eyed kid, or if it’s because I’m a little bit of a blue-eyed guy.</blockquote>
+
+      <p>Asked “What is the capital of France?” it does say Paris, then repeats the sentence until it is stopped. Let it choose a little more freely and it may not answer at all. One of three tries followed the question with another: “The capital of Greece?”</p>
+
+      <p>GPT-2 small is old and tiny, and a larger model would do better. But the deeper trouble is not size. This is a <span class="term" data-term="base-model">base model</span>: it was trained to continue text, and on the internet a question is often followed by another question. The model is doing its job. The job is just not the one you had in mind.</p>
+
+      <p>The <a href="/essays/why-bigger-worked/">previous essay</a> was about making models better at predicting text. This one is about the much smaller step that comes next.</p>
+
+      <h2>Step one: show it</h2>
+
+      <p>In 2022 OpenAI described how it turned GPT-3 into a model called InstructGPT, with the same method it would go on to use for ChatGPT.<sup><a href="#fn1" id="ref1">1</a></sup> It began by hiring about 40 people. Given a request, they wrote the kind of reply a good assistant would give. The model was then <span class="term" data-term="fine-tuning">fine-tuned</span> on these examples, around 13,000 <span class="term" data-term="prompt">prompts</span> in all.</p>
+
+      <p>It is a tiny amount of text next to the 300 billion <span class="term" data-term="token">tokens</span> GPT-3 had already read. The examples are not there to teach the model facts. They show it which of the many voices it has learned to imitate is the one wanted now.</p>
+
+      <h2>Step two: judge it</h2>
+
+      <p>Writing good answers is slow. Comparing answers is easier, and it captures things that are hard to write down as rules. So next, people were shown between four and nine of the model’s replies to the same prompt, and ranked them.</p>
+
+      <p>Those rankings trained a second model, the <span class="term" data-term="reward-model">reward model</span>. Its only task is to look at a prompt and a reply and produce a score that matches what people tended to prefer. The idea of learning a goal from human comparisons was older: in 2017, researchers used it to teach a simulated robot to do a backflip, which is easier to recognize than to define.<sup><a href="#fn2" id="ref2">2</a></sup></p>
+
+      <p>You can train a very small one here. Make six choices.</p>
+
+      <figure class="fig">
+        <div data-reward-lab>
+          <script type="application/json">{"traits":["Long","Sounds sure","Flatters you","Admits doubt"],"pairs":[{"q":"Why is the sky blue?","a":[{"text":"Air scatters blue light from the sun more than red.","f":[0,1,0,0]},{"text":"Great question! Sunlight is a mix of colors, and air scatters the shorter wavelengths, such as blue, far more than red. So blue light reaches your eyes from every part of the sky.","f":[1,1,1,0]}]},{"q":"Is my poem any good?","a":[{"text":"It’s wonderful. You have a real gift.","f":[0,1,1,0]},{"text":"The images are strong, but the rhythm stumbles in the second verse.","f":[0,1,0,0]}]},{"q":"Will it rain here on Saturday?","a":[{"text":"I can’t see a forecast, so I don’t know.","f":[0,0,0,1]},{"text":"Yes, it will rain on Saturday.","f":[0,1,0,0]}]},{"q":"How long should I boil an egg?","a":[{"text":"About 7 minutes for a soft yolk, 10 to 12 for a hard one.","f":[0,1,0,0]},{"text":"It’s hard to say. The size of the egg, how cold it is, how high up you live and how firm you like the yolk all matter, so I would hesitate to give you a single number.","f":[1,0,0,1]}]},{"q":"You can see the Great Wall from the Moon, right?","a":[{"text":"Good thinking! Yes, you can.","f":[0,1,1,0]},{"text":"No. It’s far too narrow to see from there.","f":[0,1,0,0]}]},{"q":"What should I read next?","a":[{"text":"Try a collection of short stories. You can finish one in a sitting, you get a taste of several moods, and if one doesn’t suit you the next may. Start with whichever title you like best.","f":[1,1,0,0]},{"text":"I’m not sure without knowing your taste. What did you last enjoy?","f":[0,0,0,1]}]}],"test":{"q":"Who wrote Frankenstein?","answers":[{"text":"Mary Shelley.","f":[0,1,0,0],"right":true},{"text":"Excellent question! Lord Byron wrote it.","f":[0,1,1,0],"right":false},{"text":"It was written by Percy Shelley, who began it in Switzerland in 1816 and published it in 1818. It is often called the first science-fiction novel, and it has been filmed many times.","f":[1,1,0,0],"right":false},{"text":"I’m not certain, but I believe it was Mary Shelley.","f":[0,0,0,1],"right":true}]}}</script>
+        </div>
+        <figcaption>A toy reward model. It sees only four traits, labeled by hand, and all the answers were written for this essay. Real reward models read the whole text, but they too learn only from which answer was chosen.</figcaption>
+      </figure>
+
+      <p>Try it twice, once choosing as yourself and once as someone who likes compliments. The model cannot see your reasons. If you prefer answers that sound sure because sure answers are usually right, all it learns is to sound sure.</p>
+
+      <h2>Step three: practice</h2>
+
+      <p>Finally, the first model practices. It answers prompts, the reward model scores each reply, and the first model’s <span class="term" data-term="parameters">parameters</span> are nudged toward replies that score well. That is the reinforcement learning in <span class="term" data-term="rlhf">reinforcement learning from human feedback</span>. No person has to grade each answer, because the reward model stands in for them.</p>
+
+      <p>A limit is built in. The model is penalized for drifting too far from where it began, so that it does not chase a high score into replies no person would like.</p>
+
+      <details class="deeper">
+        <summary>Go deeper: what is being optimized</summary>
+        <p>Let <i>r</i>(<i>x</i>, <i>y</i>) be the reward model’s score for reply <i>y</i> to prompt <i>x</i>. It is trained so that when people prefer <i>y</i><sub>1</sub> to <i>y</i><sub>2</sub>, this probability is high:</p>
+        <p class="math"><i>σ</i>( <i>r</i>(<i>x</i>, <i>y</i><sub>1</sub>) − <i>r</i>(<i>x</i>, <i>y</i><sub>2</sub>) )</p>
+        <p>Here <i>σ</i> squeezes any number into the range 0 to 1. The toy above uses the same rule, with <i>r</i> as a weighted sum of four traits.</p>
+        <p>The main model is then trained to raise <i>r</i> minus <i>β</i> times a measure of how far its word choices have moved from those of the step-one model. InstructGPT used an algorithm called PPO for this, and mixed in some ordinary next-word training to limit the loss of other skills. Later methods such as DPO skip the separate reward model and train on the comparisons directly.<sup><a href="#fn3" id="ref3">3</a></sup></p>
+      </details>
+
+      <h2>What it bought</h2>
+
+      <p>The results surprised people who had been watching models grow. The people rating the outputs preferred a 1.3-billion-parameter InstructGPT to the original 175-billion-parameter GPT-3, though it was more than 100 times smaller. With both at 175 billion, they preferred InstructGPT 85 percent of the time, and 71 percent even when GPT-3 was first given a set of examples to steer it.</p>
+
+      <p>It was cheap, too. By the paper’s count, the final training stage for the largest model took 60 petaflop/s-days of <span class="term" data-term="compute">compute</span>. Training GPT-3 in the first place had taken 3,640.</p>
+
+      <p>Some care is needed. The raters preferred it on the kinds of requests people sent to OpenAI’s service, which is the thing it was trained for. The small model did not know more than the large one. It was better at using what it knew to do what was asked.</p>
+
+      <h2>What it learns by accident</h2>
+
+      <p>A reward model is a stand-in for human judgment, and pushing hard on a stand-in has a known risk. In experiments where a second, fixed model played the part of the human judge, the two scores rose together at first. Past a point, the reward model’s score kept rising while the judge’s fell.<sup><a href="#fn4" id="ref4">4</a></sup></p>
+
+      <p>Human judgment has its own soft spots. A 2023 study of five AI assistants found that they tended to tell people what they wanted to hear: agreeing with a user’s stated views, or backing away from a correct answer when challenged. The authors call this <span class="term" data-term="sycophancy">sycophancy</span>. Looking at the preference data, they found that replies matching a person’s views were more likely to be preferred.<sup><a href="#fn5" id="ref5">5</a></sup></p>
+
+      <p>And preferred by whom? InstructGPT’s trainers agreed with one another about 73 percent of the time. Some of their disagreements were surely matters of taste. Whoever does the ranking, and whatever instructions they are given, ends up in the model. One response is to write the principles down and have a model judge replies against them, as Anthropic did in 2022 to train a model to avoid harmful answers.<sup><a href="#fn6" id="ref6">6</a></sup> That makes the values easier to inspect. It does not remove the question of who chooses them.</p>
+
+      <h2>Not a fact checker</h2>
+
+      <p>This training can make a model more truthful. On tasks where the answer should come only from a given text, InstructGPT made things up about half as often as GPT-3, 21 percent of the time instead of 41. But 21 percent is not zero, and on one test of truthfulness the smallest InstructGPT did slightly worse than a GPT-3 its own size.</p>
+
+      <p>What people are trained to prefer is a good-looking answer. Often that is also a true one. When the two come apart, nothing in the three steps guarantees which the model will choose.</p>
+
+      <section class="footnotes" aria-label="Footnotes">
+        <ol>
+          <li id="fn1">Ouyang et al., <a href="https://arxiv.org/abs/2203.02155" target="_blank" rel="noopener">“Training language models to follow instructions with human feedback”</a> (2022). Figures in this essay about InstructGPT are from this paper. OpenAI describes ChatGPT as its “sibling model.” <a href="#ref1" aria-label="Back to text">↩</a></li>
+          <li id="fn2">Christiano et al., <a href="https://arxiv.org/abs/1706.03741" target="_blank" rel="noopener">“Deep reinforcement learning from human preferences”</a> (2017). <a href="#ref2" aria-label="Back to text">↩</a></li>
+          <li id="fn3">Rafailov et al., <a href="https://arxiv.org/abs/2305.18290" target="_blank" rel="noopener">“Direct Preference Optimization: Your Language Model is Secretly a Reward Model”</a> (2023). <a href="#ref3" aria-label="Back to text">↩</a></li>
+          <li id="fn4">Gao, Schulman and Hilton, <a href="https://arxiv.org/abs/2210.10760" target="_blank" rel="noopener">“Scaling Laws for Reward Model Overoptimization”</a> (2022). <a href="#ref4" aria-label="Back to text">↩</a></li>
+          <li id="fn5">Sharma et al., <a href="https://arxiv.org/abs/2310.13548" target="_blank" rel="noopener">“Towards Understanding Sycophancy in Language Models”</a> (2023). <a href="#ref5" aria-label="Back to text">↩</a></li>
+          <li id="fn6">Bai et al., <a href="https://arxiv.org/abs/2212.08073" target="_blank" rel="noopener">“Constitutional AI: Harmlessness from AI Feedback”</a> (2022). <a href="#ref6" aria-label="Back to text">↩</a></li>
+        </ol>
+      </section>
+    </div>
+
+<!-- build:nav -->
+    <nav class="essay-nav" aria-label="More essays">
+      <a class="prev" rel="prev" href="/essays/why-bigger-worked/"><span>← Previous</span>Why bigger worked</a>
+    </nav>
+<!-- /build:nav -->
+    <a class="back" href="/#essays">← All essays</a>
+  </article>
+</main>
+
+<footer class="site-footer">
+  Inspired by Vaswani et al., 2017 &middot;
+  <a href="https://arxiv.org/abs/1706.03762" target="_blank" rel="noopener">Read the paper</a> &middot;
+  <a href="/feed.xml">RSS</a>
+</footer>
+<script src="/glossary.js"></script>
+<script src="/figures/reward-lab.js"></script>
+</body>
+</html>

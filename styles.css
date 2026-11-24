@@ -545,3 +545,38 @@ svg.arcs path {
 .scale-table th, .scale-table td { padding: .25rem .5rem; text-align: right; border-bottom: 1px solid var(--line); font-variant-numeric: tabular-nums; font-weight: 400; }
 .scale-table th:first-child { text-align: left; }
 .scale-table td { color: var(--fg); }
+
+/* ---------- Reward lab figure ---------- */
+
+.lab { font-family: var(--sans); font-size: .92rem; line-height: 1.5; text-align: left; padding: 0 .5rem; }
+.lab > div:focus { outline: none; }
+.lab-step { font-size: .75rem; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
+.lab-gap { margin-top: 1.5rem; }
+.prose .lab-q { font-weight: 600; color: var(--fg); margin: .35rem 0 .8rem; }
+.prose .lab-hint, .prose .lab-note { font-size: .85rem; color: var(--muted); margin: .7rem 0; }
+.lab-pair { display: grid; grid-template-columns: 1fr 1fr; gap: .6rem; }
+.lab-answer, .lab-again {
+  font: inherit; color: var(--fg); text-align: left;
+  background: var(--bg); border: 1px solid #2a3046; border-radius: 8px;
+  padding: .7rem .85rem; cursor: pointer;
+}
+.lab-answer { min-height: 7.5rem; display: flex; align-items: flex-start; }
+.lab-again { padding: .3rem .8rem; background: none; }
+.lab-answer:hover, .lab-again:hover { border-color: var(--accent); }
+.lab button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.lab-weight { display: grid; grid-template-columns: 9rem 1fr 3.2rem; align-items: center; gap: .6rem; padding: .15rem 0; }
+.lab-track { position: relative; height: .7rem; background: linear-gradient(var(--muted), var(--muted)) 50% / 1px 100% no-repeat, var(--bg); border-radius: 3px; }
+.lab-bar { position: absolute; top: 0; height: 100%; }
+.lab-bar.is-pos { background: #3987e5; border-radius: 0 3px 3px 0; }
+.lab-bar.is-neg { background: #d95926; border-radius: 3px 0 0 3px; }
+.lab-num { text-align: right; font-size: .8rem; color: var(--muted); font-variant-numeric: tabular-nums; }
+.prose .lab-ranked { padding-left: 1.4rem; margin: 0; }
+.prose .lab-ranked li { margin-bottom: .7rem; }
+.lab-tags { display: flex; gap: 1rem; font-size: .8rem; color: var(--muted); }
+.lab-tags .is-right, .lab-tags .is-wrong { color: var(--fg); }
+@media (max-width: 560px) {
+  .lab { padding: 0 .4rem; }
+  .lab-pair { grid-template-columns: 1fr; }
+  .lab-answer { min-height: 0; }
+  .lab-weight { grid-template-columns: 7rem 1fr 2.8rem; gap: .4rem; }
+}
