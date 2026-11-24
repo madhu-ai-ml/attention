@@ -6,14 +6,15 @@
 <title>What a token is · All You Need Is Attention</title>
 <meta name="description" content="Language models never see letters or words. They see tokens. What those are, how they are chosen, and why they explain some of AI’s strangest mistakes.">
 <meta property="og:title" content="What a token is">
-<meta property="og:description" content="Language models never see letters or words. They see tokens, and that explains some of AI’s strangest mistakes.">
+<meta property="og:description" content="Language models never see letters or words. They see tokens. What those are, how they are chosen, and why they explain some of AI’s strangest mistakes.">
 <meta property="og:type" content="article">
+<meta property="article:published_time" content="2026-11-24T13:00:00-05:00">
 <meta property="og:url" content="https://allyouneedisattention.com/essays/what-a-token-is/">
 <meta property="og:site_name" content="All You Need Is Attention">
-<meta property="og:image" content="https://allyouneedisattention.com/og-image.png">
+<meta property="og:image" content="https://allyouneedisattention.com/essays/what-a-token-is/og-image.png">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
-<meta property="og:image:alt" content="All you need is attention, with curved attention lines linking the words.">
+<meta property="og:image:alt" content="What a token is, an essay from All You Need Is Attention.">
 <meta name="twitter:card" content="summary_large_image">
 <link rel="canonical" href="https://allyouneedisattention.com/essays/what-a-token-is/">
 <meta name="theme-color" content="#0b0d12">
@@ -44,7 +45,7 @@
 
       <p>Neural networks only do arithmetic, so before a model can read anything, the text has to become numbers. That job belongs to a separate program called a <span class="term" data-term="tokenizer">tokenizer</span>. It has a fixed list of text fragments, its <span class="term" data-term="vocabulary">vocabulary</span>, and it chops your input into pieces from that list. Each piece has an ID number, and the model only ever receives the IDs.</p>
 
-      <p>Inside the model, each ID is swapped for an <span class="term" data-term="embedding">embedding</span>, a long list of numbers that the model learned during training. From there on, everything the previous essay described happens over tokens: attention connects tokens to other tokens, and the model’s output is a prediction of the next token’s ID, which the tokenizer turns back into text.</p>
+      <p>Inside the model, each ID is swapped for an <span class="term" data-term="embedding">embedding</span>, a long list of numbers that the model learned during training. From there on, everything <a href="/essays/what-came-next/">the first essay</a> described happens over tokens: attention connects tokens to other tokens, and the model’s output is a prediction of the next token’s ID, which the tokenizer turns back into text.</p>
 
       <p>In English, a token averages roughly four characters, or about three-quarters of a word. Common words like “the” or “house” are usually a single token. Rarer words get split: “tokenization” might become “token” and “ization.”</p>
 
@@ -141,6 +142,12 @@ def train_bpe(words, num_merges):
       </section>
     </div>
 
+<!-- build:nav -->
+    <nav class="essay-nav" aria-label="More essays">
+      <a class="prev" rel="prev" href="/essays/what-came-next/"><span>← Previous</span>What came next</a>
+      <a class="next" rel="next" href="/essays/attention-step-by-step/"><span>Next →</span>Attention, step by step</a>
+    </nav>
+<!-- /build:nav -->
     <a class="back" href="/#essays">← All essays</a>
   </article>
 </main>

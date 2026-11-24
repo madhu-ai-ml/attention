@@ -488,3 +488,10 @@ svg.arcs path {
 .steps-bar { display: block; height: 100%; background: var(--accent); border-radius: 3px; transition: width .3s ease; }
 .steps-num { font-variant-numeric: tabular-nums; color: var(--muted); font-size: .8rem; text-align: right; }
 .steps-row.is-masked { opacity: .4; }
+
+/* ---------- Previous/next links ---------- */
+
+.essay-nav { display: flex; gap: 1rem; margin-top: 3rem; padding-top: 1.5rem; border-top: 1px solid var(--line); }
+.essay-nav a { border: 0; flex: 1; min-width: 0; font-weight: 600; line-height: 1.35; }
+.essay-nav a span { display: block; font-size: .8rem; font-weight: 400; color: var(--muted); margin-bottom: .25rem; }
+.essay-nav .next { text-align: right; }

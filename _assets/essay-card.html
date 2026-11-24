@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<!-- Share card for one essay. _tools/build.py fills in the title and size and renders it at 1200×630. -->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<style>
+  html, body { margin: 0; width: 1200px; height: 630px; overflow: hidden; }
+  body {
+    background: radial-gradient(900px 480px at 30% 35%, rgba(138,180,255,.13), transparent 70%), #0b0d12;
+    color: #e8ebf2;
+    font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    position: relative;
+  }
+  .eyebrow { position: absolute; left: 90px; top: 84px; font-size: 22px; letter-spacing: .24em; text-transform: uppercase; color: #8b93a7; }
+  h1 {
+    position: absolute; left: 90px; right: 90px; top: 150px; height: 270px;
+    margin: 0; display: flex; align-items: center;
+    font-size: {{SIZE}}px; font-weight: 600; letter-spacing: -.03em; line-height: 1.08;
+    text-wrap: balance;
+  }
+  svg { position: absolute; left: 90px; top: 440px; width: 1020px; height: 80px; overflow: visible; }
+  path { fill: none; stroke: #8ab4ff; stroke-linecap: round; }
+  .domain { position: absolute; left: 90px; bottom: 54px; font-size: 24px; color: #8b93a7; }
+</style>
+</head>
+<body>
+  <div class="eyebrow">All You Need Is Attention</div>
+  <h1><span>{{TITLE}}</span></h1>
+  <svg viewBox="0 0 1020 80" aria-hidden="true">
+    <path d="M0,0 Q430,150 860,0" stroke-width="8" opacity=".65"/>
+    <path d="M260,0 Q560,110 860,0" stroke-width="3" opacity=".3"/>
+    <path d="M520,0 Q690,90 860,0" stroke-width="6" opacity=".5"/>
+    <path d="M700,0 Q780,60 860,0" stroke-width="4" opacity=".35"/>
+  </svg>
+  <div class="domain">allyouneedisattention.com</div>
+</body>
+</html>
