@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Attention, step by step · All You Need Is Attention</title>
+<meta name="description" content="One sentence, one word, one real attention head. A walk through the arithmetic at the heart of a language model, using actual numbers from GPT-2.">
+<meta property="og:title" content="Attention, step by step">
+<meta property="og:description" content="One sentence, one word, one real attention head. A walk through the arithmetic at the heart of a language model, using actual numbers from GPT-2.">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://allyouneedisattention.com/essays/attention-step-by-step/">
+<meta property="og:site_name" content="All You Need Is Attention">
+<meta property="og:image" content="https://allyouneedisattention.com/og-image.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="All you need is attention, with curved attention lines linking the words.">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="canonical" href="https://allyouneedisattention.com/essays/attention-step-by-step/">
+<meta name="theme-color" content="#0b0d12">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='7' fill='%230b0d12'/><circle cx='9' cy='20' r='3' fill='%238ab4ff'/><circle cx='23' cy='20' r='3' fill='%238ab4ff'/><path d='M9 20Q16 6 23 20' stroke='%238ab4ff' stroke-width='2' fill='none'/></svg>">
+<link rel="stylesheet" href="/styles.css">
+<link rel="alternate" type="application/rss+xml" title="All You Need Is Attention" href="/feed.xml">
+</head>
+<body>
+<header class="site-header">
+  <a class="brand" href="/" aria-label="All You Need Is Attention, home"><svg viewBox="0 0 32 32" aria-hidden="true"><rect width="32" height="32" rx="7" fill="#151a26"/><circle cx="9" cy="20" r="3" fill="#8ab4ff"/><circle cx="23" cy="20" r="3" fill="#8ab4ff"/><path d="M9 20Q16 6 23 20" stroke="#8ab4ff" stroke-width="2" fill="none"/></svg><span class="brand-name">All You Need Is Attention</span></a>
+  <nav><a href="/#essays">Essays</a><a href="/glossary/">Glossary</a><a href="/about/">About</a></nav>
+</header>
+
+<main>
+  <article class="article">
+    <header>
+      <h1>Attention, step by step</h1>
+      <p class="dek">One sentence, one word, one real attention head. A walk through the arithmetic at the heart of a language model, using actual numbers from GPT-2.</p>
+      <div class="meta"><time datetime="2026-11-24">November 24, 2026</time> · 5 min read</div>
+    </header>
+
+    <div class="prose">
+      <p>The <a href="/essays/what-came-next/">first essay</a> on this site drew arcs over a sentence: “The cat sat on the mat because it was tired.” The thickest arc ran from “it” to “cat.” Those weights were made up.</p>
+
+      <p>This essay does it for real. The numbers below come from the smallest version of GPT-2,<sup><a href="#fn1" id="ref1">1</a></sup> a model OpenAI released in 2019 that is small enough to take apart on a laptop. We will follow one word, “it,” through one small piece of the model, and then ask what the result does and does not show.</p>
+
+      <h2>What goes in</h2>
+
+      <p>GPT-2 reads this sentence as ten <span class="term" data-term="token">tokens</span>, one per word. Each starts as an <span class="term" data-term="embedding">embedding</span>, a list of 768 numbers, with its position in the sentence mixed in. Those lists then pass through twelve layers, each of which revises them.</p>
+
+      <p>Every layer contains twelve <span class="term" data-term="attention-head">attention heads</span> working side by side, for 144 in all. Each head is its own small version of <span class="term" data-term="attention">attention</span>, with its own learned parameters. We will look at the fourth head in the fifth layer. By the time a word reaches it, four layers have already been at work, so “it” is no longer just a dictionary entry. It carries some information about the words before it.</p>
+
+      <h2>Queries, keys and values</h2>
+
+      <p>The head turns each word’s 768 numbers into three shorter lists of 64 numbers, using matrices learned in training. They are called the <span class="term" data-term="query-key-value">query, the key and the value</span>, and it helps to think of them as three roles:</p>
+
+      <ul>
+        <li>The <strong>query</strong> is what this word is looking for.</li>
+        <li>The <strong>key</strong> is what this word offers to be found by.</li>
+        <li>The <strong>value</strong> is what this word hands over if it is found.</li>
+      </ul>
+
+      <p>The descriptions are an aid to memory, not something written into the model. Each one is only a list of numbers that training found useful.</p>
+
+      <h2>Four steps</h2>
+
+      <p>Start with “it” selected in the figure and press the steps in order.</p>
+
+      <figure class="fig">
+        <div data-attention-steps data-start="7" data-dk="64">
+          <script type="application/json">{"tokens":["The","cat","sat","on","the","mat","because","it","was","tired"],"scores":[[0.432,1.615,1.055,1.25,1.059,0.954,1.007,1.367,1.247,1.048],[0.26,-2.031,-4.399,-4.516,-4.358,-4.98,-3.996,-3.271,-3.629,-4.007],[-1.701,1.756,-2.782,-2.079,-3.774,-2.632,-2.559,0.648,-1.901,-2.68],[-1.623,1.24,-1.589,-3.513,-4.729,-2.48,-4.249,-0.297,-2.477,-2.628],[-2.209,-1.086,-2.18,-3.71,-5.077,-2.363,-2.921,-1.228,-2.576,-1.676],[-1.706,-1.993,-2.903,-3.506,-3.142,-4.648,-3.258,-1.586,-1.946,-1.159],[-2.665,-1.806,-2.274,-2.409,-3.682,-3.64,-4.101,-1.409,-2.182,-0.854],[-2.144,0.569,-3.101,-3.57,-4.33,-2.582,-3.628,-3.296,-3.357,-1.999],[-2.466,-1.118,-4.098,-4.071,-6.035,-2.606,-3.706,-2.253,-3.478,-2.193],[-2.28,-0.277,-5.137,-5.11,-5.956,-3.429,-4.462,-0.572,-2.27,-3.419]]}</script>
+        </div>
+        <figcaption>Real scores from GPT-2 small, layer 5, head 4. Your browser computes the mask and softmax from them. In the first three steps, longer bars mean higher scores within the row.</figcaption>
+      </figure>
+
+      <p><strong>Score.</strong> The query for “it” is compared with the key of every word by a dot product: multiply the two lists number by number and add up the results. “Cat” scores 4.6. Nothing else comes close; “because,” for example, scores −29.0.</p>
+
+      <p><strong>Scale.</strong> Every score is divided by 8, the square root of 64. Adding up 64 products can produce large numbers, and large gaps make the last step too decisive. Applied to the unscaled scores here, softmax would give “cat” more than 99.99 percent.</p>
+
+      <p><strong>Mask.</strong> GPT-2 is trained to predict the next word, so it must not peek ahead. The <span class="term" data-term="causal-mask">mask</span> rules out “was” and “tired,” which come after “it.” Not every Transformer has this step: BERT, for one, reads in both directions.</p>
+
+      <p><strong>Softmax.</strong> <span class="term" data-term="softmax">Softmax</span> turns the scores that are left into weights adding up to 100 percent. “Cat” gets about 84. The runner-up, “The,” gets less than 6.</p>
+
+      <p>One thing remains. The head adds up the values of all the words, each multiplied by its weight, so what “it” receives is mostly the value of “cat.” The results from all twelve heads are combined and added to the list of numbers for “it,” which moves on through the layer a little changed.</p>
+
+      <details class="deeper">
+        <summary>Go deeper: the whole head in code</summary>
+        <p>This is one head, with the mask. <i>X</i> holds one row of 768 numbers per word, after GPT-2’s layer normalization. The three matrices are 768 by 64. GPT-2 also adds a learned bias to each product, left out here.</p>
+<pre><code>import numpy as np
+
+def head(X, W_q, W_k, W_v):
+    Q, K, V = X @ W_q, X @ W_k, X @ W_v
+    scores = Q @ K.T / np.sqrt(K.shape[-1])
+    future = np.triu(np.ones(scores.shape, dtype=bool), k=1)
+    scores[future] = -np.inf
+    weights = np.exp(scores - scores.max(axis=-1, keepdims=True))
+    weights /= weights.sum(axis=-1, keepdims=True)
+    return weights @ V</code></pre>
+        <p>The twelve outputs, 64 numbers each, are joined into one list of 768 and multiplied by one more learned matrix.</p>
+      </details>
+
+      <h2>Does it understand the sentence?</h2>
+
+      <p>It is tempting to say the model has worked out that “it” means the cat. The mask shows why that is too generous. When this head processes “it,” the word “tired” is still hidden. Change the ending to “because it was soft,” which points to the mat, and the weights for “it” are exactly the same. They have to be.</p>
+
+      <p>Running the same head on other sentences is humbling. In “Yesterday the old car hit the wall because it was raining,” it sends 52 percent of the weight for “it” to “car,” though nothing there refers to the car. In “The dog chased the ball because it was fast,” it splits almost evenly, 45 percent to “dog” and 44 to “ball.” In “The trophy did not fit in the suitcase because it was too big,” its favorite is “The.”</p>
+
+      <p>Nor is it reserved for pronouns. Select “sat” in the figure: 96 percent goes to “cat.” A fairer description, from these few examples, is that the head often finds an earlier noun that the current word might have to do with. That is useful, and it is a long way from understanding.</p>
+
+      <h2>The other 143</h2>
+
+      <p>That head was also hand-picked. Of the 144, it gives “cat” the most weight from “it,” by a wide margin: the next highest gives 41 percent. Only five heads give “cat” the most weight of any word.</p>
+
+      <p>Some heads do something much simpler. The last head in the same layer looks, almost without exception, at the word just before:</p>
+
+      <figure class="fig">
+        <div data-attention-arcs data-tokens='["The", "cat", "sat", "on", "the", "mat", "because", "it", "was", "tired"]' data-weights='[[1.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0],[1.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0],[0.0,1.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0],[0.0,0.0,1.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0],[0.0,0.0,0.0,1.0,0.0,0.0,0.0,0.0,0.0,0.0],[0.0,0.0,0.0,0.0,1.0,0.0,0.0,0.0,0.0,0.0],[0.0,0.0,0.0,0.0,0.0,1.0,0.0,0.0,0.0,0.0],[0.0,0.0,0.0,0.0,0.0,0.0,1.0,0.0,0.0,0.0],[0.0,0.0,0.0,0.0,0.0,0.0,0.0,1.0,0.0,0.0],[0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,1.0,0.0]]' data-start="7"></div>
+        <figcaption>GPT-2 small, layer 5, head 12, rounded to two decimals. Tap or hover over a word. After the first word, every one gives more than 99 percent of its weight to the word before it.</figcaption>
+      </figure>
+
+      <p>The most common habit is stranger. For “it,” 108 of the 144 heads give the most weight to “The,” the first word of the sentence. This is not because “The” is informative. Researchers have found that language models often send large amounts of attention to the first few tokens, whatever they are, and call them <span class="term" data-term="attention-sink">attention sinks</span>.<sup><a href="#fn2" id="ref2">2</a></sup> One explanation is that weights have to add up to 100 percent, so a head with nothing useful to add still has to put them somewhere.</p>
+
+      <h2>What the arcs can tell you</h2>
+
+      <p>Attention weights are appealing because they look like an explanation. Whether they are one has been argued over for years, in papers titled “Attention is not Explanation”<sup><a href="#fn3" id="ref3">3</a></sup> and, in reply, “Attention is not not Explanation.”<sup><a href="#fn4" id="ref4">4</a></sup> The weights show how much of each value is passed along at one point. They do not show what the values contain, what the other heads did, or what later layers made of it all.</p>
+
+      <p>So the arcs are real, and the arithmetic behind them is simple enough to fit in four buttons. What they mean is harder. A single head is one small calculation among many, and the model’s behavior comes from all of them together.</p>
+
+      <section class="footnotes" aria-label="Footnotes">
+        <ol>
+          <li id="fn1">Radford et al., <a href="https://cdn.openai.com/better-language-models/language_models_are_unsupervised_multitask_learners.pdf" target="_blank" rel="noopener">“Language Models are Unsupervised Multitask Learners”</a> (2019). The weights are from the <a href="https://huggingface.co/openai-community/gpt2" target="_blank" rel="noopener">published GPT-2 small model</a>, which has about 124 million parameters. <a href="#ref1" aria-label="Back to text">↩</a></li>
+          <li id="fn2">Xiao et al., <a href="https://arxiv.org/abs/2309.17453" target="_blank" rel="noopener">“Efficient Streaming Language Models with Attention Sinks”</a> (2023). <a href="#ref2" aria-label="Back to text">↩</a></li>
+          <li id="fn3">Jain and Wallace, <a href="https://arxiv.org/abs/1902.10186" target="_blank" rel="noopener">“Attention is not Explanation”</a> (2019). <a href="#ref3" aria-label="Back to text">↩</a></li>
+          <li id="fn4">Wiegreffe and Pinter, <a href="https://arxiv.org/abs/1908.04626" target="_blank" rel="noopener">“Attention is not not Explanation”</a> (2019). <a href="#ref4" aria-label="Back to text">↩</a></li>
+        </ol>
+      </section>
+    </div>
+
+    <a class="back" href="/#essays">← All essays</a>
+  </article>
+</main>
+
+<footer class="site-footer">
+  Inspired by Vaswani et al., 2017 &middot;
+  <a href="https://arxiv.org/abs/1706.03762" target="_blank" rel="noopener">Read the paper</a> &middot;
+  <a href="/feed.xml">RSS</a>
+</footer>
+<script src="/glossary.js"></script>
+<script src="/figures/attention-steps.js"></script>
+<script src="/figures/attention-arcs.js"></script>
+</body>
+</html>

@@ -38,6 +38,22 @@
       term: 'Context window',
       def: 'The maximum number of tokens a model can take into account at once, covering both your input and its reply.'
     },
+    'attention-head': {
+      term: 'Attention head',
+      def: 'One of several attention calculations that run side by side in a layer, each with its own learned parameters.'
+    },
+    'query-key-value': {
+      term: 'Query, key and value',
+      def: 'Three lists of numbers an attention head makes from each token. Queries are compared with keys to set the weights, and the weights decide how much of each value is passed along.'
+    },
+    'causal-mask': {
+      term: 'Mask (causal)',
+      def: 'The step that hides later tokens, so a model trained to predict the next token cannot look ahead.'
+    },
+    'attention-sink': {
+      term: 'Attention sink',
+      def: 'A token, usually at the start of the text, that receives a lot of attention even though it carries little useful meaning.'
+    },
     'embedding': {
       term: 'Embedding',
       def: 'A list of numbers (a vector) that represents a token. Tokens with related meanings end up with similar embeddings.'

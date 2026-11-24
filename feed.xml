@@ -10,7 +10,15 @@
     <atom:link href="https://allyouneedisattention.com/feed.xml" rel="self" type="application/rss+xml"/>
     <description>Essays on AI and what came after “Attention Is All You Need.”</description>
     <language>en</language>
-    <lastBuildDate>Tue, 24 Nov 2026 13:00:00 -0500</lastBuildDate>
+    <lastBuildDate>Tue, 24 Nov 2026 16:24:00 -0500</lastBuildDate>
+
+    <item>
+      <title>Attention, step by step</title>
+      <link>https://allyouneedisattention.com/essays/attention-step-by-step/</link>
+      <guid isPermaLink="true">https://allyouneedisattention.com/essays/attention-step-by-step/</guid>
+      <pubDate>Tue, 24 Nov 2026 16:24:00 -0500</pubDate>
+      <description>One sentence, one word, one real attention head. A walk through the arithmetic at the heart of a language model, using actual numbers from GPT-2.</description>
+    </item>
 
     <item>
       <title>What a token is</title>
