@@ -4,146 +4,60 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>All You Need Is Attention</title>
-<meta name="description" content="A home for AI, inspired by “Attention Is All You Need” (Vaswani et al., 2017), the paper that started the transformer era.">
+<meta name="description" content="Essays on AI and what came after “Attention Is All You Need” (Vaswani et al., 2017), the paper that started the transformer era.">
 <meta property="og:title" content="All You Need Is Attention">
-<meta property="og:description" content="A home for AI, inspired by the paper that started the transformer era.">
+<meta property="og:description" content="Essays on AI and what came after the paper that started the transformer era.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://allyouneedisattention.com/">
 <meta name="theme-color" content="#0b0d12">
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='7' fill='%230b0d12'/><circle cx='9' cy='20' r='3' fill='%238ab4ff'/><circle cx='23' cy='20' r='3' fill='%238ab4ff'/><path d='M9 20Q16 6 23 20' stroke='%238ab4ff' stroke-width='2' fill='none'/></svg>">
-<style>
-  :root {
-    --bg: #0b0d12;
-    --fg: #e8ebf2;
-    --muted: #8b93a7;
-    --accent: #8ab4ff;
-    --line: #1c2030;
-  }
-  * { box-sizing: border-box; }
-  html, body { height: 100%; }
-  body {
-    margin: 0;
-    background:
-      radial-gradient(900px 500px at 50% 35%, rgba(138,180,255,.09), transparent 70%),
-      var(--bg);
-    color: var(--fg);
-    font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
-    display: flex;
-    flex-direction: column;
-    min-height: 100vh;
-    -webkit-font-smoothing: antialiased;
-  }
-  main {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    padding: 4rem 1.5rem 2rem;
-    text-align: center;
-  }
-  .eyebrow {
-    font-size: .8rem;
-    letter-spacing: .22em;
-    text-transform: uppercase;
-    color: var(--muted);
-    margin: 0 0 2.5rem;
-  }
-  .stage { position: relative; display: inline-block; padding-bottom: 5.5rem; }
-  h1 {
-    margin: 0;
-    font-weight: 600;
-    font-size: clamp(2.4rem, 8.5vw, 6rem);
-    letter-spacing: -.03em;
-    line-height: 1.05;
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: 0 .28em;
-  }
-  .tok {
-    cursor: default;
-    transition: color .25s ease;
-    outline: none;
-    border-radius: .15em;
-  }
-  .tok.active { color: var(--accent); }
-  .tok:focus-visible { box-shadow: 0 0 0 2px var(--accent); }
-  svg.arcs {
-    position: absolute; left: 0; top: 0;
-    width: 100%; height: 100%;
-    pointer-events: none;
-    overflow: visible;
-  }
-  svg.arcs path {
-    fill: none;
-    stroke: var(--accent);
-    stroke-linecap: round;
-    transition: opacity .35s ease;
-  }
-  .sub {
-    max-width: 34rem;
-    margin: 1.5rem auto 0;
-    color: var(--muted);
-    font-size: 1.1rem;
-    line-height: 1.6;
-  }
-  .sub a, footer a {
-    color: var(--fg);
-    text-decoration: none;
-    border-bottom: 1px solid var(--line);
-    transition: border-color .2s, color .2s;
-  }
-  .sub a:hover, footer a:hover { color: var(--accent); border-color: var(--accent); }
-  .status {
-    margin-top: 2.5rem;
-    display: inline-flex; align-items: center; gap: .6rem;
-    font-size: .85rem; color: var(--muted);
-    border: 1px solid var(--line);
-    padding: .5rem 1rem; border-radius: 999px;
-  }
-  .dot {
-    width: .5rem; height: .5rem; border-radius: 50%;
-    background: var(--accent);
-    animation: pulse 2.4s ease-in-out infinite;
-  }
-  @keyframes pulse { 50% { opacity: .25; } }
-  footer {
-    padding: 1.5rem;
-    text-align: center;
-    font-size: .8rem;
-    color: var(--muted);
-  }
-  @media (prefers-reduced-motion: reduce) {
-    .dot { animation: none; }
-    * { transition: none !important; }
-  }
-</style>
+<link rel="stylesheet" href="/styles.css">
 </head>
 <body>
+<header class="site-header">
+  <a class="brand" href="/"><svg viewBox="0 0 32 32" aria-hidden="true"><rect width="32" height="32" rx="7" fill="#151a26"/><circle cx="9" cy="20" r="3" fill="#8ab4ff"/><circle cx="23" cy="20" r="3" fill="#8ab4ff"/><path d="M9 20Q16 6 23 20" stroke="#8ab4ff" stroke-width="2" fill="none"/></svg>All You Need Is Attention</a>
+  <nav><a href="/#essays">Essays</a><a href="/about/">About</a></nav>
+</header>
+
 <main>
-  <p class="eyebrow">allyouneedisattention.com</p>
+  <section class="hero">
+    <p class="eyebrow">Essays on AI</p>
 
-  <div class="stage" id="stage">
-    <svg class="arcs" id="arcs" aria-hidden="true"></svg>
-    <h1 id="title" aria-label="All you need is attention">
-      <span class="tok" tabindex="0">All</span>
-      <span class="tok" tabindex="0">you</span>
-      <span class="tok" tabindex="0">need</span>
-      <span class="tok" tabindex="0">is</span>
-      <span class="tok" tabindex="0">attention.</span>
-    </h1>
-  </div>
+    <div class="stage" id="stage">
+      <svg class="arcs" id="arcs" aria-hidden="true"></svg>
+      <h1 id="title" aria-label="All you need is attention">
+        <span class="tok" tabindex="0">All</span>
+        <span class="tok" tabindex="0">you</span>
+        <span class="tok" tabindex="0">need</span>
+        <span class="tok" tabindex="0">is</span>
+        <span class="tok" tabindex="0">attention.</span>
+      </h1>
+    </div>
 
-  <p class="sub">
-    In 2017, a paper titled
-    <a href="https://arxiv.org/abs/1706.03762" target="_blank" rel="noopener">“Attention Is All You Need”</a>
-    introduced the Transformer and set off the AI revolution we’re living in.
-    This site is about what came next.
-  </p>
+    <p class="sub">
+      In 2017, a paper titled
+      <a href="https://arxiv.org/abs/1706.03762" target="_blank" rel="noopener">“Attention Is All You Need”</a>
+      introduced the Transformer and set off the AI revolution we’re living in.
+      This site is about what came next.
+    </p>
+  </section>
 
-  <div class="status"><span class="dot"></span> Something is being built here. Check back soon.</div>
+  <section class="essays" id="essays">
+    <h2 class="section-label">Essays</h2>
+    <!-- Newest first. Copy an <li> block when you publish a new essay. -->
+    <ul class="essay-list">
+      <li>
+        <a href="/essays/what-came-next/">
+          <h3>What came next</h3>
+          <p>One paper about machine translation quietly became the blueprint for almost every AI system that followed. A short tour of how that happened.</p>
+          <div class="meta"><time datetime="2026-11-23">November 23, 2026</time> · 4 min read</div>
+        </a>
+      </li>
+    </ul>
+  </section>
 </main>
 
-<footer>
+<footer class="site-footer">
   Inspired by Vaswani et al., 2017 &middot;
   <a href="https://arxiv.org/abs/1706.03762" target="_blank" rel="noopener">Read the paper</a>
 </footer>

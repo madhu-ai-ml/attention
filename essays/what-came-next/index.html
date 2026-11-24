@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>What came next · All You Need Is Attention</title>
+<meta name="description" content="One paper about machine translation quietly became the blueprint for almost every AI system that followed. A short tour of how that happened.">
+<meta property="og:title" content="What came next">
+<meta property="og:description" content="One paper about machine translation quietly became the blueprint for almost every AI system that followed.">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://allyouneedisattention.com/essays/what-came-next/">
+<meta name="theme-color" content="#0b0d12">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='7' fill='%230b0d12'/><circle cx='9' cy='20' r='3' fill='%238ab4ff'/><circle cx='23' cy='20' r='3' fill='%238ab4ff'/><path d='M9 20Q16 6 23 20' stroke='%238ab4ff' stroke-width='2' fill='none'/></svg>">
+<link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+<header class="site-header">
+  <a class="brand" href="/"><svg viewBox="0 0 32 32" aria-hidden="true"><rect width="32" height="32" rx="7" fill="#151a26"/><circle cx="9" cy="20" r="3" fill="#8ab4ff"/><circle cx="23" cy="20" r="3" fill="#8ab4ff"/><path d="M9 20Q16 6 23 20" stroke="#8ab4ff" stroke-width="2" fill="none"/></svg>All You Need Is Attention</a>
+  <nav><a href="/#essays">Essays</a><a href="/about/">About</a></nav>
+</header>
+
+<main>
+  <article class="article">
+    <header>
+      <h1>What came next</h1>
+      <p class="dek">One paper about machine translation quietly became the blueprint for almost every AI system that followed. A short tour of how that happened.</p>
+      <div class="meta"><time datetime="2026-11-23">November 23, 2026</time> · 4 min read</div>
+    </header>
+
+    <div class="prose">
+      <p>In June 2017, eight researchers at Google posted a paper with an unusually confident title: <a href="https://arxiv.org/abs/1706.03762" target="_blank" rel="noopener">“Attention Is All You Need.”</a> Its stated goal was modest. It wanted to translate English into German and French a little better, and a lot faster, than the systems of the day.</p>
+
+      <p>It did that. It also, without quite meaning to, handed the field a general-purpose engine. Nearly every headline AI system of the years since, from chatbots and code assistants to image models and protein-structure predictors, is built on the architecture that paper introduced: the Transformer.</p>
+
+      <h2>The idea, in one paragraph</h2>
+
+      <p>Before 2017, the leading language models read text the way you might read through a keyhole: one word at a time, carrying a running summary forward. That made them slow to train and forgetful over long passages. The Transformer threw out the keyhole. Every word looks at every other word at once and decides, with a learned set of weights, which ones matter for understanding it. That act of looking is <em>attention</em>. The animated arcs on this site’s home page are a cartoon of it: when the model reads “attention,” it leans heavily on “All” and “need.”</p>
+
+      <p>Because every word can be processed in parallel, Transformers suit the hardware we already had, GPUs that do thousands of calculations simultaneously. That turned out to matter more than anything else.</p>
+
+      <h2>2018–2019: read everything, then specialize</h2>
+
+      <p>Within a year, two families of models showed what the architecture could do when fed enough text. OpenAI’s <strong>GPT</strong> trained a Transformer simply to predict the next word across a large pile of books, then fine-tuned it for specific tasks. Google’s <strong>BERT</strong> trained one to fill in blanked-out words, and it promptly topped a wide range of language-understanding benchmarks.</p>
+
+      <p>The recipe both shared, <em>pretrain broadly, then adapt</em>, became the default way to build language systems. GPT-2, in 2019, scaled the idea up to 1.5 billion parameters and produced paragraphs of fluent prose that startled people outside the field for the first time.</p>
+
+      <h2>2020: bigger turns out to be different</h2>
+
+      <p>In 2020 two things happened that reshaped the field’s ambitions. Researchers published <em>scaling laws</em> showing that a Transformer’s performance improved smoothly and predictably as you added data, parameters and compute.<sup><a href="#fn1" id="ref1">1</a></sup> And GPT-3, at 175 billion parameters, showed that a big enough model could perform new tasks from a handful of examples written into the prompt, with no retraining at all.</p>
+
+      <p>The same year, the architecture escaped language. The <strong>Vision Transformer</strong> chopped images into small patches, treated each patch like a word, and matched the best image classifiers. DeepMind’s <strong>AlphaFold 2</strong>, built around attention, predicted protein structures with accuracy that largely settled a fifty-year-old problem in biology.</p>
+
+      <blockquote>A design built for translation turned out to be a design for learning relationships between pieces of anything.</blockquote>
+
+      <h2>2022: the public meets the Transformer</h2>
+
+      <p>Raw next-word predictors are capable but unruly. The missing step was teaching them to be helpful conversational partners, largely through <em>reinforcement learning from human feedback</em>: people ranked model responses, and the model was tuned toward the ones people preferred. In November 2022 that work reached the public as ChatGPT, and the Transformer went from a research topic to something a hundred million people used within a couple of months.</p>
+
+      <h2>Since then</h2>
+
+      <p>The years that followed have been less about new architectures than about what you can build on this one: models that see, hear and speak; models that write and run code; models that use tools and carry out multi-step tasks; and a steady stream of work on making them cheaper, longer-context, more reliable and better understood. Underneath almost all of it, the core loop from 2017 is still recognizable: tokens in, attention across them, a prediction out.</p>
+
+      <h2>What this site is for</h2>
+
+      <p>That is the thread these essays will follow. Some will explain how a piece of the machinery works, with optional detours into the math for those who want it. Others will be about what the technology is doing to the world it is now part of. All of them start from the same place: a paper that, it turns out, was right about its title.</p>
+
+      <section class="footnotes" aria-label="Footnotes">
+        <ol>
+          <li id="fn1">Kaplan et al., <a href="https://arxiv.org/abs/2001.08361" target="_blank" rel="noopener">“Scaling Laws for Neural Language Models”</a> (2020). Later work, notably DeepMind’s Chinchilla paper (2022), revised how best to split a fixed budget between model size and data. <a href="#ref1" aria-label="Back to text">↩</a></li>
+        </ol>
+      </section>
+    </div>
+
+    <a class="back" href="/#essays">← All essays</a>
+  </article>
+</main>
+
+<footer class="site-footer">
+  Inspired by Vaswani et al., 2017 &middot;
+  <a href="https://arxiv.org/abs/1706.03762" target="_blank" rel="noopener">Read the paper</a>
+</footer>
+</body>
+</html>
