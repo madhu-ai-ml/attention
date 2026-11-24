@@ -12,7 +12,7 @@
   const GLOSSARY = {
     'attention': {
       term: 'Attention',
-      def: 'A mechanism that lets each token look at every other token and decide, with learned weights, how much each one matters for understanding it.'
+      def: 'A mechanism that lets each token look at every other token and work out how much each one matters for understanding it. The weights are computed fresh for each input, using parameters learned in training.'
     },
     'transformer': {
       term: 'Transformer',

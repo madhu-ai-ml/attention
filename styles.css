@@ -395,3 +395,6 @@ svg.arcs path {
 .notfound { padding-top: 6rem; text-align: center; }
 .notfound .eyebrow { margin-bottom: 1rem; }
 .notfound .dek a { color: var(--fg); }
+@media (max-width: 400px) {
+  .arcs-stage { font-size: .8rem; gap: .22em; }
+}
