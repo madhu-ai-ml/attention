@@ -15,8 +15,8 @@
 </head>
 <body>
 <header class="site-header">
-  <a class="brand" href="/"><svg viewBox="0 0 32 32" aria-hidden="true"><rect width="32" height="32" rx="7" fill="#151a26"/><circle cx="9" cy="20" r="3" fill="#8ab4ff"/><circle cx="23" cy="20" r="3" fill="#8ab4ff"/><path d="M9 20Q16 6 23 20" stroke="#8ab4ff" stroke-width="2" fill="none"/></svg>All You Need Is Attention</a>
-  <nav><a href="/#essays">Essays</a><a href="/about/">About</a></nav>
+  <a class="brand" href="/" aria-label="All You Need Is Attention, home"><svg viewBox="0 0 32 32" aria-hidden="true"><rect width="32" height="32" rx="7" fill="#151a26"/><circle cx="9" cy="20" r="3" fill="#8ab4ff"/><circle cx="23" cy="20" r="3" fill="#8ab4ff"/><path d="M9 20Q16 6 23 20" stroke="#8ab4ff" stroke-width="2" fill="none"/></svg><span class="brand-name">All You Need Is Attention</span></a>
+  <nav><a href="/#essays">Essays</a><a href="/glossary/">Glossary</a><a href="/about/">About</a></nav>
 </header>
 
 <main>
@@ -28,33 +28,68 @@
     </header>
 
     <div class="prose">
-      <p>In June 2017, eight researchers at Google posted a paper with an unusually confident title: <a href="https://arxiv.org/abs/1706.03762" target="_blank" rel="noopener">“Attention Is All You Need.”</a> Its stated goal was modest. It wanted to translate English into German and French a little better, and a lot faster, than the systems of the day.</p>
+      <p>In June 2017, eight researchers at Google posted a paper with an unusually confident title: <a href="https://arxiv.org/abs/1706.03762" target="_blank" rel="noopener">“Attention Is All You Need.”</a><sup><a href="#fn1" id="ref1">1</a></sup> Its stated goal was modest. It wanted to translate English into German and French a little better, and a lot faster, than the systems of the day.</p>
 
-      <p>It did that. It also, without quite meaning to, handed the field a general-purpose engine. Nearly every headline AI system of the years since, from chatbots and code assistants to image models and protein-structure predictors, is built on the architecture that paper introduced: the Transformer.</p>
+      <p>It did that. It also, without quite meaning to, handed the field a general-purpose engine. Nearly every headline AI system of the years since, from chatbots and code assistants to image models and protein-structure predictors, is built on the architecture that paper introduced: the <span class="term" data-term="transformer">Transformer</span>.</p>
 
       <h2>The idea, in one paragraph</h2>
 
-      <p>Before 2017, the leading language models read text the way you might read through a keyhole: one word at a time, carrying a running summary forward. That made them slow to train and forgetful over long passages. The Transformer threw out the keyhole. Every word looks at every other word at once and decides, with a learned set of weights, which ones matter for understanding it. That act of looking is <em>attention</em>. The animated arcs on this site’s home page are a cartoon of it: when the model reads “attention,” it leans heavily on “All” and “need.”</p>
+      <p>Before 2017, the leading language models read text the way you might read through a keyhole: one word at a time, carrying a running summary forward. That made them slow to train and forgetful over long passages. The Transformer threw out the keyhole. Every word looks at every other word at once and decides, with a learned set of weights, which ones matter for understanding it. That act of looking is <span class="term" data-term="attention"><em>attention</em></span>.</p>
 
-      <p>Because every word can be processed in parallel, Transformers suit the hardware we already had, GPUs that do thousands of calculations simultaneously. That turned out to matter more than anything else.</p>
+      <figure class="fig">
+        <div data-attention-arcs
+             data-tokens='["The","cat","sat","on","the","mat","because","it","was","tired"]'
+             data-weights='[
+               [.20,.60,.10,0,0,.10,0,0,0,0],
+               [.25,.20,.35,0,0,0,0,0,0,.20],
+               [0,.45,.10,.15,0,.30,0,0,0,0],
+               [0,0,.30,.10,.10,.50,0,0,0,0],
+               [0,0,0,.10,.20,.70,0,0,0,0],
+               [0,0,.30,.30,.25,.15,0,0,0,0],
+               [0,0,.30,0,0,0,.10,.30,0,.30],
+               [0,.60,0,0,0,.15,0,.10,0,.15],
+               [0,0,0,0,0,0,0,.50,.15,.35],
+               [0,.30,0,0,0,0,0,.45,.15,.10]
+             ]'
+             data-start="7"></div>
+        <figcaption>Tap or hover over a word to see what it attends to. Reading “it,” the model has to work out what “it” refers to, so it leans hardest on “cat.” The weights are hand-drawn for illustration, not taken from a real model.</figcaption>
+      </figure>
+
+      <p>Because every word can be processed in parallel, Transformers suit the hardware we already had: <span class="term" data-term="gpu">GPUs</span>, which do thousands of calculations simultaneously. That turned out to matter more than anything else.</p>
+
+      <details class="deeper">
+        <summary>Go deeper: the attention formula</summary>
+        <p>Each <span class="term" data-term="token">token</span> starts as an <span class="term" data-term="embedding">embedding</span>, a vector of numbers. The model multiplies it by three learned matrices to get a <em>query</em> (what am I looking for?), a <em>key</em> (what do I contain?) and a <em>value</em> (what do I pass along?). Stacking these for every token gives matrices <i>Q</i>, <i>K</i> and <i>V</i>, and the whole operation is one line:</p>
+        <p class="math">Attention(<i>Q</i>, <i>K</i>, <i>V</i>) = softmax(<i>QK</i><sup>T</sup> / √<i>d</i><sub>k</sub>) <i>V</i></p>
+        <p><i>QK</i><sup>T</sup> scores every query against every key. Dividing by √<i>d</i><sub>k</sub> (the key length) keeps the scores in a range where training stays stable. <span class="term" data-term="softmax">Softmax</span> turns each row of scores into weights that sum to 1, which are exactly the arc thicknesses in the figure above. Those weights then blend the values. In NumPy:</p>
+<pre><code>import numpy as np
+
+def attention(Q, K, V):
+    d_k = Q.shape[-1]
+    scores = Q @ K.T / np.sqrt(d_k)
+    weights = np.exp(scores - scores.max(axis=-1, keepdims=True))
+    weights /= weights.sum(axis=-1, keepdims=True)  # softmax
+    return weights @ V</code></pre>
+        <p>The paper runs eight of these “heads” side by side, each with its own learned matrices, so different heads can track different kinds of relationships.</p>
+      </details>
 
       <h2>2018–2019: read everything, then specialize</h2>
 
-      <p>Within a year, two families of models showed what the architecture could do when fed enough text. OpenAI’s <strong>GPT</strong> trained a Transformer simply to predict the next word across a large pile of books, then fine-tuned it for specific tasks. Google’s <strong>BERT</strong> trained one to fill in blanked-out words, and it promptly topped a wide range of language-understanding benchmarks.</p>
+      <p>Within a year, two families of models showed what the architecture could do when fed enough text. OpenAI’s <strong>GPT</strong><sup><a href="#fn2" id="ref2">2</a></sup> trained a Transformer simply to predict the next word across a large pile of books, then <span class="term" data-term="fine-tuning">fine-tuned</span> it for specific tasks. Google’s <strong>BERT</strong><sup><a href="#fn3" id="ref3">3</a></sup> trained one to fill in blanked-out words, and it promptly topped a wide range of language-understanding benchmarks.</p>
 
-      <p>The recipe both shared, <em>pretrain broadly, then adapt</em>, became the default way to build language systems. GPT-2, in 2019, scaled the idea up to 1.5 billion parameters and produced paragraphs of fluent prose that startled people outside the field for the first time.</p>
+      <p>The recipe both shared, <em><span class="term" data-term="pretraining">pretrain</span> broadly, then adapt</em>, became the default way to build language systems. GPT-2, in 2019, scaled the idea up to 1.5 billion <span class="term" data-term="parameters">parameters</span> and produced paragraphs of fluent prose that startled people outside the field for the first time.</p>
 
       <h2>2020: bigger turns out to be different</h2>
 
-      <p>In 2020 two things happened that reshaped the field’s ambitions. Researchers published <em>scaling laws</em> showing that a Transformer’s performance improved smoothly and predictably as you added data, parameters and compute.<sup><a href="#fn1" id="ref1">1</a></sup> And GPT-3, at 175 billion parameters, showed that a big enough model could perform new tasks from a handful of examples written into the prompt, with no retraining at all.</p>
+      <p>In 2020 two things happened that reshaped the field’s ambitions. Researchers published <span class="term" data-term="scaling-laws"><em>scaling laws</em></span> showing that a Transformer’s performance improved smoothly and predictably as you added data, parameters and compute.<sup><a href="#fn4" id="ref4">4</a></sup> And GPT-3, at 175 billion parameters, showed that a big enough model could perform new tasks from a handful of examples written into the <span class="term" data-term="prompt">prompt</span>, with no retraining at all.<sup><a href="#fn5" id="ref5">5</a></sup></p>
 
-      <p>The same year, the architecture escaped language. The <strong>Vision Transformer</strong> chopped images into small patches, treated each patch like a word, and matched the best image classifiers. DeepMind’s <strong>AlphaFold 2</strong>, built around attention, predicted protein structures with accuracy that largely settled a fifty-year-old problem in biology.</p>
+      <p>The same year, the architecture escaped language. The <strong>Vision Transformer</strong><sup><a href="#fn6" id="ref6">6</a></sup> chopped images into small patches, treated each patch like a word, and matched the best image classifiers. DeepMind’s <strong>AlphaFold 2</strong>,<sup><a href="#fn7" id="ref7">7</a></sup> built around attention, predicted protein structures with accuracy that largely settled a fifty-year-old problem in biology.</p>
 
       <blockquote>A design built for translation turned out to be a design for learning relationships between pieces of anything.</blockquote>
 
       <h2>2022: the public meets the Transformer</h2>
 
-      <p>Raw next-word predictors are capable but unruly. The missing step was teaching them to be helpful conversational partners, largely through <em>reinforcement learning from human feedback</em>: people ranked model responses, and the model was tuned toward the ones people preferred. In November 2022 that work reached the public as ChatGPT, and the Transformer went from a research topic to something a hundred million people used within a couple of months.</p>
+      <p>Raw next-word predictors are capable but unruly. The missing step was teaching them to be helpful conversational partners, largely through <span class="term" data-term="rlhf"><em>reinforcement learning from human feedback</em></span>: people ranked model responses, and the model was tuned toward the ones people preferred.<sup><a href="#fn8" id="ref8">8</a></sup> In November 2022 that work reached the public as ChatGPT, and the Transformer went from a research topic to something a hundred million people used within a couple of months.</p>
 
       <h2>Since then</h2>
 
@@ -66,7 +101,14 @@
 
       <section class="footnotes" aria-label="Footnotes">
         <ol>
-          <li id="fn1">Kaplan et al., <a href="https://arxiv.org/abs/2001.08361" target="_blank" rel="noopener">“Scaling Laws for Neural Language Models”</a> (2020). Later work, notably DeepMind’s Chinchilla paper (2022), revised how best to split a fixed budget between model size and data. <a href="#ref1" aria-label="Back to text">↩</a></li>
+          <li id="fn1">Vaswani et al., <a href="https://arxiv.org/abs/1706.03762" target="_blank" rel="noopener">“Attention Is All You Need”</a> (2017). <a href="#ref1" aria-label="Back to text">↩</a></li>
+          <li id="fn2">Radford et al., <a href="https://cdn.openai.com/research-covers/language-unsupervised/language_understanding_paper.pdf" target="_blank" rel="noopener">“Improving Language Understanding by Generative Pre-Training”</a> (2018). <a href="#ref2" aria-label="Back to text">↩</a></li>
+          <li id="fn3">Devlin et al., <a href="https://arxiv.org/abs/1810.04805" target="_blank" rel="noopener">“BERT: Pre-training of Deep Bidirectional Transformers for Language Understanding”</a> (2018). <a href="#ref3" aria-label="Back to text">↩</a></li>
+          <li id="fn4">Kaplan et al., <a href="https://arxiv.org/abs/2001.08361" target="_blank" rel="noopener">“Scaling Laws for Neural Language Models”</a> (2020). Later work, notably DeepMind’s Chinchilla paper (2022), revised how best to split a fixed budget between model size and data. <a href="#ref4" aria-label="Back to text">↩</a></li>
+          <li id="fn5">Brown et al., <a href="https://arxiv.org/abs/2005.14165" target="_blank" rel="noopener">“Language Models are Few-Shot Learners”</a> (2020). <a href="#ref5" aria-label="Back to text">↩</a></li>
+          <li id="fn6">Dosovitskiy et al., <a href="https://arxiv.org/abs/2010.11929" target="_blank" rel="noopener">“An Image is Worth 16x16 Words: Transformers for Image Recognition at Scale”</a> (2020). <a href="#ref6" aria-label="Back to text">↩</a></li>
+          <li id="fn7">Jumper et al., <a href="https://doi.org/10.1038/s41586-021-03819-2" target="_blank" rel="noopener">“Highly accurate protein structure prediction with AlphaFold”</a> (2021). The system was first shown at the CASP14 competition in 2020. <a href="#ref7" aria-label="Back to text">↩</a></li>
+          <li id="fn8">Ouyang et al., <a href="https://arxiv.org/abs/2203.02155" target="_blank" rel="noopener">“Training language models to follow instructions with human feedback”</a> (2022). <a href="#ref8" aria-label="Back to text">↩</a></li>
         </ol>
       </section>
     </div>
@@ -79,5 +121,7 @@
   Inspired by Vaswani et al., 2017 &middot;
   <a href="https://arxiv.org/abs/1706.03762" target="_blank" rel="noopener">Read the paper</a>
 </footer>
+<script src="/glossary.js"></script>
+<script src="/figures/attention-arcs.js"></script>
 </body>
 </html>

@@ -4,6 +4,15 @@
   1. Copy this file to /essays/<your-slug>/index.html
   2. Replace every ALL-CAPS placeholder (title, dek, date, read time, slug, body).
   3. Add a matching <li> to the essay list in /index.html (newest first).
+  4. Delete any example blocks below you don't use. If you drop all figures,
+     you can remove the attention-arcs.js script tag at the bottom.
+
+  CONVENTIONS
+  - Glossary term:  <span class="term" data-term="token">tokens</span>
+                    (keys live in /glossary.js; add new terms there)
+  - Go deeper box:  <details class="deeper"><summary>Go deeper: …</summary> … </details>
+  - Citation:       Surname et al., <a href="…">“Paper Title”</a> (Year). Optional note.
+                    One footnote per source, numbered in order of first mention.
   This folder starts with "_" so GitHub Pages does not publish it.
 -->
 <html lang="en">
@@ -22,8 +31,8 @@
 </head>
 <body>
 <header class="site-header">
-  <a class="brand" href="/"><svg viewBox="0 0 32 32" aria-hidden="true"><rect width="32" height="32" rx="7" fill="#151a26"/><circle cx="9" cy="20" r="3" fill="#8ab4ff"/><circle cx="23" cy="20" r="3" fill="#8ab4ff"/><path d="M9 20Q16 6 23 20" stroke="#8ab4ff" stroke-width="2" fill="none"/></svg>All You Need Is Attention</a>
-  <nav><a href="/#essays">Essays</a><a href="/about/">About</a></nav>
+  <a class="brand" href="/" aria-label="All You Need Is Attention, home"><svg viewBox="0 0 32 32" aria-hidden="true"><rect width="32" height="32" rx="7" fill="#151a26"/><circle cx="9" cy="20" r="3" fill="#8ab4ff"/><circle cx="23" cy="20" r="3" fill="#8ab4ff"/><path d="M9 20Q16 6 23 20" stroke="#8ab4ff" stroke-width="2" fill="none"/></svg><span class="brand-name">All You Need Is Attention</span></a>
+  <nav><a href="/#essays">Essays</a><a href="/glossary/">Glossary</a><a href="/about/">About</a></nav>
 </header>
 
 <main>
@@ -35,14 +44,29 @@
     </header>
 
     <div class="prose">
-      <p>Body text goes here. Use plain HTML: &lt;p&gt;, &lt;h2&gt;, &lt;blockquote&gt;, &lt;ul&gt;, &lt;pre&gt;&lt;code&gt;.</p>
+      <p>Body text goes here. Use plain HTML: &lt;p&gt;, &lt;h2&gt;, &lt;blockquote&gt;, &lt;ul&gt;, &lt;pre&gt;&lt;code&gt;. Mark jargon like <span class="term" data-term="token">tokens</span> so newcomers can hover for a definition.</p>
 
       <h2>A section heading</h2>
-      <p>A footnote reference looks like this.<sup><a href="#fn1" id="ref1">1</a></sup></p>
+      <p>A citation looks like this.<sup><a href="#fn1" id="ref1">1</a></sup></p>
+
+      <details class="deeper">
+        <summary>Go deeper: TOPIC</summary>
+        <p>Optional detail for technical readers: math, code, paper specifics.</p>
+        <p class="math">softmax(<i>x</i>)<sub>i</sub> = e<sup><i>x</i><sub>i</sub></sup> / Σ<sub>j</sub> e<sup><i>x</i><sub>j</sub></sup></p>
+<pre><code>print("code blocks go flush-left inside &lt;pre&gt;")</code></pre>
+      </details>
+
+      <figure class="fig">
+        <div data-attention-arcs
+             data-tokens='["Word","one","two"]'
+             data-weights='[[.2,.5,.3],[.6,.2,.2],[.3,.5,.2]]'
+             data-start="0"></div>
+        <figcaption>CAPTION. Say whether the weights are illustrative or from a real model.</figcaption>
+      </figure>
 
       <section class="footnotes" aria-label="Footnotes">
         <ol>
-          <li id="fn1">Footnote text. <a href="#ref1" aria-label="Back to text">↩</a></li>
+          <li id="fn1">Surname et al., <a href="https://arxiv.org/abs/XXXX.XXXXX" target="_blank" rel="noopener">“Paper Title”</a> (YEAR). <a href="#ref1" aria-label="Back to text">↩</a></li>
         </ol>
       </section>
     </div>
@@ -55,5 +79,7 @@
   Inspired by Vaswani et al., 2017 &middot;
   <a href="https://arxiv.org/abs/1706.03762" target="_blank" rel="noopener">Read the paper</a>
 </footer>
+<script src="/glossary.js"></script>
+<script src="/figures/attention-arcs.js"></script>
 </body>
 </html>
