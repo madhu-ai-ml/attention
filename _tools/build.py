@@ -39,7 +39,7 @@ SITE_TITLE = 'All You Need Is Attention'
 FEED_DESCRIPTION = 'Essays on AI and what came after “Attention Is All You Need.”'
 AUTHOR = 'Madhu'
 AUTHOR_LINKS = ['https://x.com/madhu_jayakumar', 'https://www.linkedin.com/in/madhu-jayakumar/',
-                'https://madhujayakumar.com/']
+                'https://madhujayakumar.com/', 'https://www.instagram.com/jmad00/']
 WORDS_PER_MINUTE = 230
 PAGES = ['index.html', 'glossary/index.html', 'about/index.html']  # besides the essays
 CHROME = [
